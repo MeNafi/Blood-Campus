@@ -4,7 +4,7 @@ import bgImg from "../../../assets/main_big_pic.png";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa"; // Icon for Name
-import { AiOutlineEyeInvisible } from "react-icons/ai"; // Eye icon for password fields
+import { AiOutlineEyeInvisible } from "react-icons/ai";
 
 const Registration = () => {
   const {
@@ -19,7 +19,7 @@ const Registration = () => {
   };
 
   // Watch password to compare with confirm password
-  const password = watch("password");
+  // const password = watch("password");
 
   return (
     <div
@@ -31,7 +31,6 @@ const Registration = () => {
 
       {/* Main Card */}
       <div className="relative z-10 w-full max-w-[500px] bg-rose-50/90 rounded-[32px] p-8 md:p-14 shadow-2xl border border-white">
-        
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="flex items-center gap-2 mb-2">
@@ -51,47 +50,84 @@ const Registration = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
           {/* Name Field */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text font-semibold text-gray-700 text-lg">Name</span>
+              <span className="label-text font-semibold text-gray-700 text-lg">
+                Name
+              </span>
             </label>
+
             <div className="relative">
               <FaRegUser className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-xl z-10" />
+
               <input
                 type="text"
                 placeholder="Enter your name...."
                 className={`input w-full h-14 pl-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
-                  errors.name ? "border-red-500" : "border-red-400/50 focus:border-red-500"
+                  errors.name
+                    ? "border-red-500"
+                    : "border-red-400/50 focus:border-red-500"
                 }`}
-                {...register("name", { required: "Name is required" })}
+                {...register("name", {
+                  required: "Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Name must be at least 3 characters",
+                  },
+                })}
               />
             </div>
+
+            {/* Error Message */}
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Email Field */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text font-semibold text-gray-700 text-lg">University Email</span>
+              <span className="label-text font-semibold text-gray-700 text-lg">
+                University Email
+              </span>
             </label>
+
             <div className="relative">
               <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
+
               <input
                 type="email"
                 placeholder="Enter your university email....."
                 className={`input w-full h-14 pl-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
-                  errors.email ? "border-red-500" : "border-red-400/50 focus:border-red-500"
+                  errors.email
+                    ? "border-red-500"
+                    : "border-red-400/50 focus:border-red-500"
                 }`}
-                {...register("email", { required: "Email is required" })}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@diu\.edu\.bd$/,
+                    message: "Must use your DIU email (@diu.edu.bd)",
+                  },
+                })}
               />
             </div>
+
+            {/* Show Error Message */}
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password Field */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text font-semibold text-gray-700 text-lg">Password</span>
+              <span className="label-text font-semibold text-gray-700 text-lg">
+                Password
+              </span>
             </label>
             <div className="relative">
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
@@ -99,7 +135,9 @@ const Registration = () => {
                 type="password"
                 placeholder="Enter a 6 digit password....."
                 className={`input w-full h-14 pl-12 pr-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
-                  errors.password ? "border-red-500" : "border-red-400/50 focus:border-red-500"
+                  errors.password
+                    ? "border-red-500"
+                    : "border-red-400/50 focus:border-red-500"
                 }`}
                 {...register("password", {
                   required: "Password is required",
@@ -113,7 +151,9 @@ const Registration = () => {
           {/* Confirm Password Field */}
           <div className="form-control w-full">
             <label className="label py-1">
-              <span className="label-text font-semibold text-gray-700 text-lg">Confirm Password</span>
+              <span className="label-text font-semibold text-gray-700 text-lg">
+                Confirm Password
+              </span>
             </label>
             <div className="relative">
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
@@ -121,17 +161,22 @@ const Registration = () => {
                 type="password"
                 placeholder="Enter your password again....."
                 className={`input w-full h-14 pl-12 pr-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
-                  errors.confirmPassword ? "border-red-500" : "border-red-400/50 focus:border-red-500"
+                  errors.confirmPassword
+                    ? "border-red-500"
+                    : "border-red-400/50 focus:border-red-500"
                 }`}
                 {...register("confirmPassword", {
                   required: "Please confirm your password",
-                  validate: (value) => value === password || "Passwords do not match",
+                  validate: (value) =>
+                    value === password || "Passwords do not match",
                 })}
               />
               <AiOutlineEyeInvisible className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer" />
             </div>
             {errors.confirmPassword && (
-              <span className="text-red-500 text-xs mt-1 ml-2">{errors.confirmPassword.message}</span>
+              <span className="text-red-500 text-xs mt-1 ml-2">
+                {errors.confirmPassword.message}
+              </span>
             )}
           </div>
 
@@ -151,7 +196,9 @@ const Registration = () => {
         <div className="text-center">
           <p className="text-gray-700 text-lg">
             Already have an account ?{" "}
-            <button className="text-[#ef4444] font-bold hover:underline">Login</button>
+            <button className="text-[#ef4444] font-bold hover:underline">
+              Login
+            </button>
           </p>
         </div>
       </div>

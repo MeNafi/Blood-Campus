@@ -5,6 +5,8 @@ import bgImg from "../../../assets/main_big_pic.png";
 import { MdEmail } from "react-icons/md";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
+import UseAuth from "../../../Hook/UseAuth";
+import { useNavigate } from "react-router";
 
 const Login = () => {
   const {
@@ -13,8 +15,20 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const { loginWithEmail } = UseAuth();
+  const navigate = useNavigate();
+
   const onSubmit = (data) => {
     console.log("Form Data:", data);
+    loginWithEmail(data.email, data.password)
+      .then((res) => {
+        console.log(res);
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.message)
+      });
   };
 
   return (
@@ -54,8 +68,8 @@ const Login = () => {
                 University Email
               </span>
             </label>
+
             <div className="relative">
-              {/* React Icon replaced here */}
               <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
 
               <input
@@ -66,13 +80,21 @@ const Login = () => {
                     ? "border-red-500"
                     : "border-red-400/50 focus:border-red-500"
                 }`}
-                {...register("email", { required: "Email is required" })}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@diu\.edu\.bd$/,
+                    message: "Must use your DIU email (@diu.edu.bd)",
+                  },
+                })}
               />
             </div>
+
+            {/* Show Error Message */}
             {errors.email && (
-              <span className="text-red-500 text-sm mt-1 ml-2">
+              <p className="text-red-500 text-sm mt-1">
                 {errors.email.message}
-              </span>
+              </p>
             )}
           </div>
 

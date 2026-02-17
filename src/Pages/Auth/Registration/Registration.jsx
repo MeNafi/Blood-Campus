@@ -5,6 +5,8 @@ import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa"; // Icon for Name
 import { AiOutlineEyeInvisible } from "react-icons/ai";
+import UseAuth from "../../../Hook/UseAuth";
+import { useNavigate } from "react-router";
 
 const Registration = () => {
   const {
@@ -14,12 +16,26 @@ const Registration = () => {
     formState: { errors },
   } = useForm();
 
+  const {registerWithEmail} = UseAuth();
+  const navigate = useNavigate();
+
   const onSubmit = (data) => {
     console.log("Registration Data:", data);
+    if(data.password === data.confirmPassword){
+      registerWithEmail(data.email, data.password)
+      .then((res)=>{
+        console.log(res)
+        navigate('/');
+      })
+      .catch(error=>{
+        console.log(error)
+        alert(error.message)
+      })
+    }
   };
 
   // Watch password to compare with confirm password
-  // const password = watch("password");
+  const password = watch("password");
 
   return (
     <div

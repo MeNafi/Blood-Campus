@@ -6,6 +6,7 @@ const BloodFilter = () => {
   
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
+  
   return (
     <section className="bg-[#FFF4F4] py-10 sm:py-16">
       {/* Container with responsive horizontal padding to match the Hero and Footer */}

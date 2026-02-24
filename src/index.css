@@ -1,2 +1,10 @@
+
+
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui"; 
+
+/* Custom background from your design */
+body {
+  background-color: #FFF4F4;
+  font-family: 'Inter', sans-serif;
+}

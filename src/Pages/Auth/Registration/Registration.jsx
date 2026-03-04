@@ -6,7 +6,7 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa"; // Icon for Name
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import UseAuth from "../../../Hook/UseAuth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Registration = () => {
   const {
@@ -212,9 +212,9 @@ const Registration = () => {
         <div className="text-center">
           <p className="text-gray-700 text-lg">
             Already have an account ?{" "}
-            <button className="text-[#ef4444] font-bold hover:underline">
+            <Link to={"/login"} className="text-[#ef4444] font-bold hover:underline">
               Login
-            </button>
+            </Link>
           </p>
         </div>
       </div>

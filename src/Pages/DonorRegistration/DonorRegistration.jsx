@@ -16,8 +16,9 @@ import {
   MdEventNote,
 } from "react-icons/md";
 import { useLoaderData } from "react-router";
-
-const axiosSecure = UseAxiosSecure
+import UseAxiosSecure from "../../Hook/UseAxiosSecure";
+import UseAxios from "../../Hook/UseAxios";
+import { useQuery } from "@tanstack/react-query";
 
 const DonorRegistration = () => {
   const {
@@ -27,7 +28,7 @@ const DonorRegistration = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     // Construct the address string from the cascading selects
     const fullAddress = `${data.sector}, ${data.area}, ${data.city}`;
 
@@ -40,7 +41,14 @@ const DonorRegistration = () => {
     };
 
     console.log("Donor Schema Ready Data:", finalData);
-    
+     try {
+      const res = await axios.post("/donor/donorRequest", finalData);
+      alert("Successfully Created");
+      console.log(res.data); // optional, if you want to see the response
+    } catch (err) {
+      alert("Error: " + err.message);
+      console.error(err);
+    }
   };
 
   const addressData = useLoaderData();
@@ -55,6 +63,8 @@ const DonorRegistration = () => {
     "w-full h-12 pl-12 pr-4 rounded-xl bg-white border-2 border-gray-200 text-gray-700 text-sm focus:border-red-500 focus:bg-white outline-none transition-all duration-300 shadow-sm";
   const selectStyle =
     "w-full h-12 pl-12 pr-10 rounded-xl bg-white border-2 border-gray-200 text-gray-700 text-sm focus:border-red-500 focus:bg-white outline-none appearance-none cursor-pointer transition-all duration-300 shadow-sm";
+
+  const axios = UseAxios();
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] flex items-center justify-center py-12 px-4 font-sans text-gray-900">
@@ -263,7 +273,6 @@ const DonorRegistration = () => {
                     {sec}
                   </option>
                 ))}
-                
               </select>
             </div>
           </section>

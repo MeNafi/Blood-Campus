@@ -6,7 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import UseAuth from "../../../Hook/UseAuth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
   const {
@@ -157,9 +157,9 @@ const Login = () => {
         <div className="text-center">
           <p className="text-gray-700 text-lg">
             Dont't have any account ?{" "}
-            <button className="text-[#ef4444] font-bold hover:underline">
+            <Link to={"/register"} className="text-[#ef4444] font-bold hover:underline">
               Create one now
-            </button>
+            </Link>
           </p>
         </div>
 

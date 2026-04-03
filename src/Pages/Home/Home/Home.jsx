@@ -1,18 +1,18 @@
-import React from 'react';
-import HeroSection from '../../../components/HeroSection/HeroSection';
-import Navbar from '../../../components/Navbar/Navbar';
-import HomeCard from '../../../components/HomeCard/HomeCard';
-import BloodFilter from '../../../components/BloodFilter/BloodFilter';
+import React from "react";
+import HeroSection from "../../../components/HeroSection/HeroSection";
+import HomeCard from "../../../components/HomeCard/HomeCard";
+import BloodFilter from "../../../components/BloodFilter/BloodFilter";
+import DonorCardWide from "../../../components/DonorCardWide/DonorCardWide";
 
 const Home = () => {
-    return (
-        <div>
-            <Navbar></Navbar>
-            <HeroSection></HeroSection>
-            <BloodFilter></BloodFilter>
-            <HomeCard></HomeCard>
-        </div>
-    );
+  return (
+    <div>
+      <HeroSection></HeroSection>
+      <BloodFilter></BloodFilter>
+      <HomeCard></HomeCard>
+      <DonorCardWide></DonorCardWide>
+    </div>
+  );
 };
 
 export default Home;

@@ -6,7 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import UseAuth from "../../../Hook/UseAuth";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 const Login = () => {
   const {
@@ -15,15 +15,17 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+
   const { loginWithEmail } = UseAuth();
   const navigate = useNavigate();
+  const location = useLocation()
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
     loginWithEmail(data.email, data.password)
       .then((res) => {
         console.log(res);
-        navigate("/");
+        navigate(location?.state || "/");
       })
       .catch((err) => {
         console.log(err);

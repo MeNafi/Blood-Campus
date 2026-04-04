@@ -2,6 +2,7 @@ import React from 'react';
 // These imports are correct, now we actually use them!
 import logo from "../../assets/logo_Grp.png";
 import bgImage from "../../assets/main_big_pic.png";
+import { Link } from 'react-router';
 
 const HeroSection = () => {
     return (
@@ -33,9 +34,9 @@ const HeroSection = () => {
                             Find Blood Now
                         </button>
                         
-                        <button className="w-full sm:w-auto px-10 py-5 bg-gray-950 text-white rounded-2xl text-sm font-black uppercase tracking-[2px] shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] hover:bg-black transition-all transform hover:-translate-y-1 active:scale-[0.98]">
+                        <Link to={'/donor-register'} className="w-full sm:w-auto px-10 py-5 bg-gray-950 text-white rounded-2xl text-sm font-black uppercase tracking-[2px] shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] hover:bg-black transition-all transform hover:-translate-y-1 active:scale-[0.98]">
                             Register as Donor
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

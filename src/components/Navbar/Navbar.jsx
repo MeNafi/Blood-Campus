@@ -13,8 +13,9 @@ const Navbar = () => {
   const navLinks = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "My Profile", path: "/profile" },
-    { name: "Request", path: "/request" },
+    { name: "Find Blood", path: "/request" },
     { name: "About", path: "/about" },
+    { name: "Be a Donor", path: "/donor-register" },
   ];
   const handleLogout = () => {
     signOutUser()
@@ -33,13 +34,13 @@ const Navbar = () => {
   return (
     <nav className="bg-[#e53935] px-6 py-3 md:px-12 flex items-center justify-between shadow-md">
       {/* Left: Logo and Brand Name */}
-      <div className="flex items-center gap-3">
+      <Link to={'/'} className="flex items-center gap-3">
         <img
           src={logo}
           alt="BloodCampus Logo"
           className="h-10" // Using filters to make logo white like the screenshot
         />
-      </div>
+      </Link>
 
       {/* Middle: Navigation Links */}
       <div className="hidden lg:flex items-center gap-8">

@@ -3,7 +3,6 @@
 
 
 
-
 ## 🧩 Tech Stack
 This project is built using the **MERN Stack** 
 

@@ -5,6 +5,7 @@ import Registration from "../Pages/Auth/Registration/Registration";
 import Home from "../Pages/Home/Home/Home";
 import DonorRegistration from "../Pages/donorRegistration/DonorRegistration";
 import PrivateRoute from "./PrivateRoute";
+import FindDonor from "../Pages/FindDonor/FindDonor";
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +25,20 @@ export const router = createBrowserRouter([
         Component: Login,
       },
       {
+        path: "/find-donor",
+        element: <PrivateRoute>
+          <FindDonor></FindDonor>
+        </PrivateRoute>
+      },
+      {
         path: "/donor-register",
+        loader: async () => {
+          const res = await fetch("/location.json");
+          if (!res.ok) {
+            throw new Error("faild to load data");
+          }
+          return res.json();
+        },
         element: (
           <PrivateRoute>
             <DonorRegistration></DonorRegistration>

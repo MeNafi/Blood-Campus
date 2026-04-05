@@ -16,7 +16,7 @@ import {
   MdEventNote,
 } from "react-icons/md";
 import { useLoaderData } from "react-router";
-import UseAxios from "../../Hook/UseAxios";
+import UseAxiosSecure from "../../Hook/UseAxiosSecure";
 
 const DonorRegistration = () => {
   const [photoPreview, setPhotoPreview] = useState(null); // Local state for preview
@@ -28,7 +28,7 @@ const DonorRegistration = () => {
     formState: { errors },
   } = useForm();
 
-  const axiosInstance = UseAxios(); // Renamed to avoid confusion
+  const axiosSecure = UseAxiosSecure(); // Renamed to avoid confusion
 
   // Handle Photo Preview Logic
   const handlePhotoChange = (e) => {
@@ -54,7 +54,7 @@ const DonorRegistration = () => {
 
     console.log("Donor Schema Ready Data:", finalData);
     try {
-      const res = await axiosInstance.post("/donor/donorRequest", finalData);
+      const res = await axiosSecure.post("/donor/donorRequest", finalData);
       alert("Successfully Created");
       console.log(res.data);
     } catch (err) {

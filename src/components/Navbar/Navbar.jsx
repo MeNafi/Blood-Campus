@@ -13,7 +13,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "My Profile", path: "/profile" },
-    { name: "Find Blood", path: "/request" },
+    { name: "Find Blood", path: "/find-donor" },
     { name: "About", path: "/about" },
     { name: "Be a Donor", path: "/donor-register" },
   ];

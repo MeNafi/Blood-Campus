@@ -28,7 +28,6 @@ The **BloodCampus** project is built using the MERN Stack to ensure scalability,
 
 
 
-
 ## 🔐 Authentication & Authorization System
 
 BloodCampus ensures secure user access and protected resources using modern authentication and authorization methods.

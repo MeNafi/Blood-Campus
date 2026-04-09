@@ -1,0 +1,154 @@
+{
+  "Dhaka": {
+    "Uttara": [
+      "Sector 1",
+      "Sector 2",
+      "Sector 3",
+      "Sector 4",
+      "Sector 5",
+      "Sector 6",
+      "Sector 7",
+      "Sector 8",
+      "Sector 9",
+      "Sector 10",
+      "Sector 11",
+      "Sector 12",
+      "Sector 13",
+      "Sector 14",
+      "Azampur",
+      "Rajlokkhi",
+      "Jasimuddin",
+      "House Building",
+      "Diabari",
+      "Uttara West",
+      "Uttara East",
+      "Others"
+    ],
+    "Mirpur": [
+      "Mirpur 1",
+      "Mirpur 2",
+      "Mirpur 6",
+      "Mirpur 7",
+      "Mirpur 10",
+      "Mirpur 11",
+      "Mirpur 12",
+      "Mirpur 13",
+      "Pallabi",
+      "Kazipara",
+      "Shewrapara",
+      "Rupnagar",
+      "DOHS",
+      "ECB Chattar",
+      "Others"
+    ],
+    "Dhanmondi": [
+      "Road 1",
+      "Road 2",
+      "Road 3",
+      "Road 4",
+      "Road 5",
+      "Road 6",
+      "Road 7",
+      "Road 8",
+      "Road 9",
+      "Road 10",
+      "Road 11",
+      "Road 12",
+      "Road 13",
+      "Road 14",
+      "Road 15",
+      "Road 27",
+      "Road 32",
+      "Kalabagan",
+      "Sankar",
+      "Zigatola",
+      "Others"
+    ],
+    "Mohammadpur": [
+      "Town Hall",
+      "Shia Mosque",
+      "Tajmahal Road",
+      "Adabor",
+      "Bosila",
+      "Nurjahan Road",
+      "Satmasjid Road",
+      "PC Culture Housing",
+      "Others"
+    ],
+    "Gulshan": [
+      "Gulshan 1",
+      "Gulshan 2",
+      "Banani",
+      "Banani DOHS",
+      "Baridhara",
+      "Baridhara DOHS",
+      "Badda",
+      "Middle Badda",
+      "Shahjadpur",
+      "Others"
+    ],
+    "Motijheel": [
+      "Arambagh",
+      "Fakirapool",
+      "AGB Colony",
+      "Shantinagar",
+      "Paltan",
+      "Segunbagicha",
+      "Others"
+    ],
+    "OldDhaka": [
+      "Lalbagh",
+      "Chawk Bazar",
+      "Bangshal",
+      "Islampur",
+      "Sadarghat",
+      "Shakhari Bazar",
+      "Kotwali",
+      "Wari",
+      "Others"
+    ],
+    "Others": ["Others"]
+  },
+  "Savar": {
+    "Ashulia": [
+      "Baipail",
+      "Jamgora",
+      "Narsinghapur",
+      "Zirabo",
+      "Chagan",
+      "Khagan",
+      "Birulia",
+      "Genda",
+      "Others"
+    ],
+    "Savar Cant.": [
+      "Nabinagar",
+      "DEPZ",
+      "Radio Colony",
+      "Bank Town",
+      "BSCIC",
+      "CRP",
+      "Others"
+    ],
+    "Hemayetpur": [
+      "Kuturia",
+      "Jaleshwar",
+      "Tatuljora",
+      "Parbotinagar",
+      "Shampur",
+      "Bagbari",
+      "Others"
+    ],
+    "Thana Road": [
+      "Savar Bazar",
+      "Bus Stand",
+      "Thana Stand",
+      "College Road",
+      "Others"
+    ],
+    "Others": ["Others"]
+  },
+  "Others": {
+    "Others": ["Others"]
+  }
+}

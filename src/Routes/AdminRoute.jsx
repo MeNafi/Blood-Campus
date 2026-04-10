@@ -11,6 +11,7 @@ const AdminRoute = ({ children }) => {
   if (loading) return <Loading />;
   if (!user) return <Navigate to="/admin/login" state={location.pathname} />;
 
+  
   const isAdmin = ADMIN_EMAILS.includes(user?.email || "");
   if (!isAdmin) return <Navigate to="/" replace />;
 

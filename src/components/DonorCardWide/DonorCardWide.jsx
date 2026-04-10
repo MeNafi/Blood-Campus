@@ -1,71 +1,59 @@
-import React from 'react';
+import React from "react";
+import { FaPhoneAlt } from "react-icons/fa";
 
-const DonorCardWide = ({ donor }) => {
-    // Destructuring with the data from your screenshot
-    const { 
-        fullName = "Ahsan Habib", 
-        bloodGroup = "A+", 
-        studentId = "0242310005341021", 
-        department = "SWE", 
-        phone = "01757276025", 
-        profileImage 
-    } = donor || {};
+export const DonorCardWide = ({ donor, isUnavailable = false, remainingDays = 0, onToggleUnavailable }) => {
+  const {
+    name,
+    fullName,
+    bloodGroup = "N/A",
+    email = "No email",
+    phone = "No phone",
+    city = "",
+    area = "",
+    subArea = "",
+    lastDonationDate = "Unknown",
+    profilePhoto,
+    profileImage,
+  } = donor || {};
+  const donorName = fullName || name || "Anonymous Donor";
+  const donorPhoto = profileImage || profilePhoto || "https://i.pravatar.cc/120?img=12";
 
-    return (
-        <div className="w-full bg-[#FFF5F5] border border-[#E53935] rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-            
-            {/* Left Section: Image and Basic Info */}
-            <div className="flex items-center gap-5 w-full md:w-auto">
-                {/* Profile Image with Red Circular Border */}
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-[#E53935] overflow-hidden flex-shrink-0 bg-white">
-                    {profileImage ? (
-                        <img 
-                            src={profileImage} 
-                            alt={fullName} 
-                            className="w-full h-full object-cover" 
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#E53935] font-bold text-2xl">
-                            {fullName.charAt(0)}
-                        </div>
-                    )}
-                </div>
-
-                {/* Name, Blood Group, and Phone */}
-                <div className="space-y-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900">
-                        {fullName}
-                    </h3>
-                    <p className="text-sm md:text-base font-medium text-gray-800">
-                        Blood Group : <span className="font-bold">{bloodGroup}</span>
-                    </p>
-                    <p className="text-sm md:text-base font-medium text-gray-800">
-                        Phone : {phone}
-                    </p>
-                </div>
-            </div>
-
-            {/* Right Section: ID, Dept, and Action */}
-            <div className="flex flex-col items-end justify-between h-full w-full md:w-auto gap-4">
-                <div className="text-right space-y-1">
-                    <p className="text-sm md:text-base font-medium text-gray-800">
-                        ID : {studentId}
-                    </p>
-                    <p className="text-sm md:text-base font-medium text-gray-800">
-                        Department : {department}
-                    </p>
-                </div>
-
-                {/* Action Button */}
-                <a 
-                    href={`tel:${phone}`}
-                    className="w-32 md:w-40 bg-[#E53935] text-white text-center py-2 rounded-xl font-bold text-lg hover:bg-[#C62828] transition-colors shadow-sm active:scale-95"
-                >
-                    Call
-                </a>
-            </div>
+  return (
+    <article className="slide-up-fade rounded-xl border border-primary/30 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <img
+            src={donorPhoto}
+            alt={donorName}
+            className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/20"
+          />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">{donorName}</h3>
+            <p className="text-sm text-primary">{bloodGroup}</p>
+            <p className="text-xs text-gray-500">{[subArea, area, city].filter(Boolean).join(", ")}</p>
+          </div>
         </div>
-    );
+        <div className="space-y-1 text-sm text-gray-600 sm:text-right">
+          <p>{email}</p>
+          <p>{phone}</p>
+          <p>Last donation: {lastDonationDate}</p>
+          {isUnavailable && <p className="text-xs font-semibold text-amber-600">Available in {remainingDays} day(s)</p>}
+          <div className="mt-2 flex flex-wrap justify-end gap-2">
+            <button className="btn btn-sm rounded-lg border-none bg-primary text-white hover:bg-red-600">
+              <FaPhoneAlt size={12} />
+              Call
+            </button>
+            <button
+              onClick={() => onToggleUnavailable?.(donor)}
+              className={`btn btn-sm rounded-lg border-none ${isUnavailable ? "bg-emerald-500 text-white hover:bg-emerald-600" : "bg-gray-800 text-white hover:bg-gray-900"}`}
+            >
+              {isUnavailable ? "Mark Available" : "Donate Blood Done"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 };
 
 export default DonorCardWide;

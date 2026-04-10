@@ -1,90 +1,79 @@
-import React from 'react';
-import { FaFacebookF, FaLinkedinIn, FaTwitter, FaGooglePlusG } from 'react-icons/fa';
-import logo from "../../assets/logo_Grp.png"; // Use your actual logo path
+import React from "react";
+import { FaFacebookF, FaLinkedinIn, FaTwitter } from "react-icons/fa";
+import logo from "../../assets/logo_Grp.png";
+import { Link } from "react-router";
 
 const Footer = () => {
-    return (
-        <footer className="bg-[#E53935] text-white py-16 px-6 md:px-12 lg:px-20">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                
-                {/* Column 1: Brand & About */}
-                <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                        <img 
-                            src={logo} 
-                            alt="Logo" 
-                            className="h-12" 
-                        />
-                    </div>
-                    <p className="text-sm leading-relaxed opacity-90 text-justify">
-                        Blood Campus is a university-based platform that enables students, teachers, and staff to instantly find blood donors during emergencies. Users register with verified university emails, set their blood group and availability, and connect securely through a privacy-controlled contact system creating a trusted campus donor network.
-                    </p>
-                </div>
+  return (
+    <footer className="bg-primary text-white">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <img src={logo} alt="BloodCampus Logo" className="h-10 w-auto" />
+            <p className="mt-4 text-sm text-white/90">
+              Blood Campus is a university-based platform for finding trusted donors during emergencies.
+            </p>
+          </div>
 
-                {/* Column 2: Quick Links */}
-                <div className="lg:ml-10">
-                    <h3 className="text-xl font-bold mb-6">Quick Links</h3>
-                    <ul className="space-y-4 text-sm opacity-90">
-                        <li><a href="#" className="hover:underline">Home</a></li>
-                        <li><a href="#" className="hover:underline">Dashboard</a></li>
-                        <li><a href="#" className="hover:underline">How it works</a></li>
-                        <li><a href="#" className="hover:underline">About us</a></li>
-                        <li><a href="#" className="hover:underline">Contract</a></li>
-                    </ul>
-                </div>
+          <div>
+            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <ul className="mt-4 space-y-2 text-sm text-white/90">
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/donor-list">Dashboard</Link></li>
+              <li><Link to="/donor-register">How it works</Link></li>
+              <li><Link to="/">About us</Link></li>
+              <li><Link to="/">Contact</Link></li>
+            </ul>
+          </div>
 
-                {/* Column 3: Support Center */}
-                <div>
-                    <h3 className="text-xl font-bold mb-6">Support Center</h3>
-                    <ul className="space-y-4 text-sm opacity-90">
-                        <li><a href="#" className="hover:underline">Any Help</a></li>
-                        <li><a href="#" className="hover:underline">Terms & Conditions</a></li>
-                        <li><a href="#" className="hover:underline">Privacy & Policy</a></li>
-                        <li><a href="#" className="hover:underline">FAQS</a></li>
-                    </ul>
-                </div>
+          <div>
+            <h3 className="text-lg font-semibold">Support Center</h3>
+            <ul className="mt-4 space-y-2 text-sm text-white/90">
+              <li><a href="/">Any Help</a></li>
+              <li><a href="/">Terms & Conditions</a></li>
+              <li><a href="/">Privacy & Policy</a></li>
+              <li><a href="/">FAQs</a></li>
+            </ul>
+          </div>
 
-                {/* Column 4: Newsletter & Socials */}
-                <div className="space-y-6">
-                    <h3 className="text-xl font-bold">NewsLetter</h3>
-                    <p className="text-sm opacity-90">
-                        Stay connected with campus donor updates.
-                    </p>
-                    <div className="relative">
-                        <input 
-                            type="email" 
-                            placeholder="Your mail" 
-                            className="w-full py-3 px-4 rounded-lg text-gray-800 outline-none"
-                        />
-                    </div>
-
-                    <div className="space-y-4">
-                        <h4 className="text-lg font-bold">Keep In Touch</h4>
-                        <div className="flex gap-3">
-                            {/* Social Icons with colored backgrounds matching your screenshot */}
-                            <a href="#" className="w-10 h-10 bg-[#3b5998] flex items-center justify-center rounded hover:opacity-80 transition-opacity">
-                                <FaFacebookF />
-                            </a>
-                            <a href="#" className="w-10 h-10 bg-[#0077b5] flex items-center justify-center rounded hover:opacity-80 transition-opacity">
-                                <FaLinkedinIn />
-                            </a>
-                            <a href="#" className="w-10 h-10 bg-[#55acee] flex items-center justify-center rounded hover:opacity-80 transition-opacity">
-                                <FaTwitter />
-                            </a>
-                            <a href="#" className="w-10 h-10 bg-[#dd4b39] flex items-center justify-center rounded hover:opacity-80 transition-opacity">
-                                <FaGooglePlusG className="text-xl" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
+          <div>
+            <h3 className="text-lg font-semibold">NewsLetter</h3>
+            <p className="mt-2 text-sm text-white/90">Stay connected with campus donor updates.</p>
+            <div className="mt-4 flex">
+              <input
+                type="email"
+                placeholder="Your mail"
+                className="w-full rounded-l-lg border-none px-3 py-2 text-sm text-gray-700 outline-none"
+              />
+              <button className="rounded-r-lg bg-white px-4 text-primary">Join</button>
             </div>
-            
-            {/* Optional Copyright line */}
-            <div className="mt-16 pt-8 border-t border-white/20 text-center text-xs opacity-70">
-                © {new Date().getFullYear()} BloodCampus DIU. All rights reserved.
+            <div className="mt-4 flex items-center gap-3">
+              <a href="/" className="rounded bg-white/20 p-2"><FaFacebookF size={14} /></a>
+              <a href="/" className="rounded bg-white/20 p-2"><FaLinkedinIn size={14} /></a>
+              <a href="/" className="rounded bg-white/20 p-2"><FaTwitter size={14} /></a>
             </div>
-        </footer>
-    );
+          </div>
+        </div>
+        <div className="mt-10 border-t border-white/30 pt-6 text-center text-sm text-white/90">
+          <p>2026 All rights reserved.</p>
+          <p className="mt-1">
+            Develop By{" "}
+            <a className="underline" href="https://github.com/ahsanrafi501" target="_blank" rel="noreferrer">
+              Ahsan Habib
+            </a>{" "}
+            and{" "}
+            <a className="underline" href="https://github.com/MeNafi" target="_blank" rel="noreferrer">
+              MeNafi
+            </a>{" "}
+            | Design by{" "}
+            <a className="underline" href="https://www.behance.net/NayeefsarkerNafi" target="_blank" rel="noreferrer">
+              N A F I
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

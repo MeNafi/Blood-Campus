@@ -2,24 +2,43 @@ import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { auth } from "../../../firebase.config";
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  const googleProvider = new GoogleAuthProvider();
+
   const registerWithEmail = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  const loginWithEmail = (email, password) => {
+  const updateUserProfile = (name) => {
+    if (!auth.currentUser) return Promise.resolve();
+    return updateProfile(auth.currentUser, { displayName: name });
+  };
+
+  const loginWithEmail = async (email, password, rememberMe = true) => {
     setLoading(true);
+    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
     return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const loginWithGoogle = () => {
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
   };
 
   const signOutUser = () => {
@@ -41,8 +60,10 @@ const AuthProvider = ({ children }) => {
   const authInfo = {
     loading,
     registerWithEmail,
+    updateUserProfile,
     user,
     loginWithEmail,
+    loginWithGoogle,
     signOutUser,
   };
   return <AuthContext value={authInfo}>{children}</AuthContext>;

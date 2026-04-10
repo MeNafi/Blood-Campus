@@ -1,9 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: light;
   root: ":root";
-  include: ;
-  exclude: ;
-  prefix: ;
-  logs: true;
+}
+
+@theme {
+  --color-primary: #ff2c2c;
+  --color-brand-bg: #fff4f4;
+}
+
+:root {
+  font-family: "SF Pro Rounded", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-brand-bg);
+  color: #1f2937;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up-fade {
+  animation: slideUpFade 700ms ease-out both;
 }

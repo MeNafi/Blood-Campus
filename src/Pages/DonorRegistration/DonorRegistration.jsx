@@ -17,6 +17,7 @@ import {
 } from "react-icons/md";
 import { useLoaderData } from "react-router";
 import UseAxiosSecure from "../../Hook/UseAxiosSecure";
+import Swal from "sweetalert2";
 
 const DonorRegistration = () => {
   const [photoPreview, setPhotoPreview] = useState(null); // Local state for preview
@@ -34,6 +35,23 @@ const DonorRegistration = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const blockedWords = ["nude", "sex", "xxx", "porn", "nsfw", "vulgar"];
+      const lowerName = file.name.toLowerCase();
+      const isBlockedName = blockedWords.some((word) => lowerName.includes(word));
+      const isImage = file.type.startsWith("image/");
+      const isTooLarge = file.size > 2 * 1024 * 1024;
+
+      if (!isImage || isTooLarge || isBlockedName) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid image",
+          text: "Please upload a clean profile image (jpg/png/webp) under 2MB.",
+          confirmButtonColor: "#FF2C2C",
+        });
+        e.target.value = "";
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => setPhotoPreview(reader.result);
       reader.readAsDataURL(file);
@@ -54,7 +72,7 @@ const DonorRegistration = () => {
 
     console.log("Donor Schema Ready Data:", finalData);
     try {
-      const res = await axiosSecure.post("/donor/donorRequest", finalData);
+      const res = await axiosSecure.post("/donor/find-donor", finalData);
       alert("Successfully Created");
       console.log(res.data);
     } catch (err) {

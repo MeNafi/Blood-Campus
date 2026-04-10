@@ -3,10 +3,12 @@ import { useForm } from "react-hook-form";
 import bgImg from "../../../assets/main_big_pic.png";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { FaRegUser } from "react-icons/fa"; // Icon for Name
-import { AiOutlineEyeInvisible } from "react-icons/ai";
+import { FaRegUser } from "react-icons/fa";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import UseAuth from "../../../Hook/UseAuth";
 import { Link, useNavigate } from "react-router";
+import SocialLogin from "../SocialLogin/SocialLogin";
+import logo from "../../../assets/logo_Grp.png";
 
 const Registration = () => {
   const {
@@ -16,21 +18,24 @@ const Registration = () => {
     formState: { errors },
   } = useForm();
 
-  const {registerWithEmail} = UseAuth();
+  const { registerWithEmail, updateUserProfile } = UseAuth();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const onSubmit = (data) => {
     console.log("Registration Data:", data);
-    if(data.password === data.confirmPassword){
+    if (data.password === data.confirmPassword) {
       registerWithEmail(data.email, data.password)
-      .then((res)=>{
-        console.log(res)
-        navigate('/');
-      })
-      .catch(error=>{
-        console.log(error);
-        alert(error.message);
-      })
+        .then(async (res) => {
+          console.log(res);
+          await updateUserProfile(data.name);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(error.message);
+        });
     }
   };
 
@@ -50,18 +55,9 @@ const Registration = () => {
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-11 h-11 bg-[#ef4444] rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-              <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center">
-                <span className="text-white text-[10px]">❤️</span>
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold text-[#ef4444] tracking-tight">
-              BloodCampus
-            </h1>
+            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto" />
           </div>
-          <p className="text-gray-800 text-lg font-medium">
-            Login to find donors quickly
-          </p>
+          <p className="text-gray-800 text-lg font-medium">Create account with university email</p>
         </div>
 
         {/* Form */}
@@ -148,7 +144,7 @@ const Registration = () => {
             <div className="relative">
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter a 6 digit password....."
                 className={`input w-full h-14 pl-12 pr-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
                   errors.password
@@ -160,7 +156,9 @@ const Registration = () => {
                   minLength: { value: 6, message: "6 characters required" },
                 })}
               />
-              <AiOutlineEyeInvisible className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer" />
+              <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer">
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </button>
             </div>
           </div>
 
@@ -174,7 +172,7 @@ const Registration = () => {
             <div className="relative">
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Enter your password again....."
                 className={`input w-full h-14 pl-12 pr-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
                   errors.confirmPassword
@@ -187,7 +185,9 @@ const Registration = () => {
                     value === password || "Passwords do not match",
                 })}
               />
-              <AiOutlineEyeInvisible className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer" />
+              <button type="button" onClick={() => setShowConfirmPassword((prev) => !prev)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer">
+                {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </button>
             </div>
             {errors.confirmPassword && (
               <span className="text-red-500 text-xs mt-1 ml-2">
@@ -216,6 +216,16 @@ const Registration = () => {
               Login
             </Link>
           </p>
+          <p className="mt-2 text-sm text-gray-600">
+            Admin user?{" "}
+            <Link to="/admin/login" className="font-semibold text-[#ef4444] hover:underline">
+              Login as Admin
+            </Link>
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <SocialLogin />
         </div>
       </div>
     </div>

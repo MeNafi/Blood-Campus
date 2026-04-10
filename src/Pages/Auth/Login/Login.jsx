@@ -1,12 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Mail, Lock, Github, Chrome } from "lucide-react";
 import bgImg from "../../../assets/main_big_pic.png";
-import { MdEmail } from "react-icons/md";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import UseAuth from "../../../Hook/UseAuth";
 import { Link, useLocation, useNavigate } from "react-router";
+import SocialLogin from "../SocialLogin/SocialLogin";
+import logo from "../../../assets/logo_Grp.png";
 
 const Login = () => {
   const {
@@ -15,10 +16,10 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-
   const { loginWithEmail } = UseAuth();
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
@@ -46,15 +47,7 @@ const Login = () => {
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-10 text-center">
           <div className="flex items-center gap-2 mb-2">
-            {/* Custom Logo Mockup */}
-            <div className="w-11 h-11 bg-[#ef4444] rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-              <div className="w-6 h-6 border-2 border-white rounded-sm flex items-center justify-center">
-                <span className="text-white text-[10px]">❤️</span>
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold text-[#ef4444] tracking-tight">
-              BloodCampus
-            </h1>
+            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto" />
           </div>
           <p className="text-gray-800 text-lg font-medium">
             Login to find donors quickly
@@ -112,9 +105,9 @@ const Login = () => {
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
 
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your 6 digit password....."
-                className={`input w-full h-14 pl-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
+                className={`input w-full h-14 pl-12 pr-12 rounded-2xl bg-white border-2 focus:outline-none transition-all ${
                   errors.password
                     ? "border-red-500"
                     : "border-red-400/50 focus:border-red-500"
@@ -124,6 +117,13 @@ const Login = () => {
                   minLength: { value: 6, message: "6 characters required" },
                 })}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+              >
+                {showPassword ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
+              </button>
             </div>
             {/* Error message for validation feedback */}
             {errors.password && (
@@ -158,21 +158,21 @@ const Login = () => {
         {/* Footer */}
         <div className="text-center">
           <p className="text-gray-700 text-lg">
-            Dont't have any account ?{" "}
+            Don't have any account ?{" "}
             <Link to={"/register"} className="text-[#ef4444] font-bold hover:underline">
               Create one now
             </Link>
           </p>
+          <p className="mt-2 text-sm text-gray-600">
+            Admin user?{" "}
+            <Link to="/admin/login" className="font-semibold text-[#ef4444] hover:underline">
+              Login as Admin
+            </Link>
+          </p>
         </div>
 
-        {/* Optional Social Login (Hidden by default to match main photo) */}
-        <div className="mt-8 flex justify-center gap-4 opacity-50 hover:opacity-100 transition-opacity">
-          <button className="btn btn-circle btn-outline btn-sm">
-            <Chrome size={16} />
-          </button>
-          <button className="btn btn-circle btn-outline btn-sm">
-            <Github size={16} />
-          </button>
+        <div className="mt-6">
+          <SocialLogin />
         </div>
       </div>
     </div>

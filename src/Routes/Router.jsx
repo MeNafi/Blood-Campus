@@ -6,6 +6,11 @@ import Home from "../Pages/Home/Home/Home";
 import DonorRegistration from "../Pages/donorRegistration/DonorRegistration";
 import PrivateRoute from "./PrivateRoute";
 import FindDonor from "../Pages/FindDonor/FindDonor";
+import DonorList from "../Pages/DonorList/DonorList";
+import AdminLogin from "../Pages/Auth/AdminLogin/AdminLogin";
+import AdminDashboard from "../Pages/Admin/AdminDashboard";
+import AdminRoute from "./AdminRoute";
+import UnableDonor from "../Pages/UnableDonor/UnableDonor";
 
 export const router = createBrowserRouter([
   {
@@ -25,10 +30,36 @@ export const router = createBrowserRouter([
         Component: Login,
       },
       {
+        path: "/admin/login",
+        Component: AdminLogin,
+      },
+      {
+        path: "/admin/dashboard",
+        element: (
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/donor-list",
+        element: <PrivateRoute>
+          <DonorList />
+        </PrivateRoute>
+      },
+      {
         path: "/find-donor",
         element: <PrivateRoute>
-          <FindDonor></FindDonor>
-        </PrivateRoute>
+          <FindDonor />
+        </PrivateRoute>,
+      },
+      {
+        path: "/unable-donor",
+        element: (
+          <PrivateRoute>
+            <UnableDonor />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/donor-register",

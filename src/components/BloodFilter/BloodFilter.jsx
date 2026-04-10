@@ -1,57 +1,55 @@
-import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FiSearch } from "react-icons/fi";
 
-const BloodFilter = ({ onFilterChange, onSearchChange }) => {
-    const [activeGroup, setActiveGroup] = useState('A+');
-    const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const BloodFilter = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("A+");
 
-    const handleGroupClick = (group) => {
-        setActiveGroup(group);
-        if (onFilterChange) onFilterChange(group);
-    };
+  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-    return (
-        <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
-            {/* Top Row: Title and Search Bar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#E53935]">
-                    Blood Group Filter
-                </h2>
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-                {/* Search Bar Container */}
-                <div className="relative w-full md:w-96 group">
-                    <input
-                        type="text"
-                        placeholder="Search Blood......"
-                        onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full h-10 pl-4 pr-12 rounded-full border border-[#E53935] text-sm outline-none focus:ring-2 focus:ring-red-100 transition-all"
-                    />
-                    <button className="absolute right-0 top-0 h-full w-12 bg-[#E53935] rounded-r-full flex items-center justify-center text-white hover:bg-[#C62828] transition-colors">
-                        <FaSearch className="text-sm" />
-                    </button>
-                </div>
+  return (
+    <section className="bg-brand-bg py-14">
+      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="rounded-xl bg-white p-5 shadow-sm sm:p-7">
+          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-3xl font-bold text-primary">Blood Group Filter</h2>
+            <div className="flex w-full overflow-hidden rounded-xl border border-primary/30 md:max-w-md">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearch}
+                placeholder="Search blood group..."
+                className="w-full bg-white px-4 py-2 text-sm outline-none"
+              />
+              <button className="bg-primary px-4 text-white" type="button">
+                <FiSearch size={18} />
+              </button>
             </div>
+          </div>
 
-            {/* Bottom Row: Blood Group Tags */}
-            <div className="flex flex-wrap items-center gap-3">
-                {bloodGroups.map((group) => (
-                    <button
-                        key={group}
-                        onClick={() => handleGroupClick(group)}
-                        className={`
-                            px-6 py-2 rounded-xl font-bold text-lg transition-all duration-300 border
-                            ${activeGroup === group 
-                                ? 'bg-[#E53935] text-white border-[#E53935] shadow-md scale-105' 
-                                : 'bg-white text-gray-700 border-[#E53935] hover:bg-red-50'
-                            }
-                        `}
-                    >
-                        {group}
-                    </button>
-                ))}
-            </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-4 md:grid-cols-4 lg:flex lg:flex-wrap">
+            {bloodGroups.map((group) => (
+              <button
+                key={group}
+                onClick={() => setSelectedGroup(group)}
+                className={`rounded-xl border px-6 py-2 text-lg font-semibold transition ${
+                  selectedGroup === group
+                    ? "border-primary bg-primary text-white"
+                    : "border-primary/40 bg-white text-gray-700 hover:border-primary"
+                }`}
+              >
+                {group}
+              </button>
+            ))}
+          </div>
         </div>
-    );
+      </div>
+    </section>
+  );
 };
 
 export default BloodFilter;

@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import logo from "../../assets/logo_Grp.png";
 
 const Loading = () => {
     return (
@@ -19,11 +20,9 @@ const Loading = () => {
                 
             </div>
 
-            {/* 2. Text Content */}
+            {/* 2. Brand Content */}
             <div className="text-center space-y-2">
-                <h1 className="text-3xl font-black text-gray-950 tracking-tight">
-                    Blood<span className="text-[#e53935]">Campus</span>
-                </h1>
+                <img src={logo} alt="BloodCampus Logo" className="mx-auto h-11 w-auto" />
                 
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-[2px]">
                     Connecting Donors

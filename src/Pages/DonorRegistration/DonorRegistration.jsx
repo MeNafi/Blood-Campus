@@ -70,7 +70,6 @@ const DonorRegistration = () => {
       profileImage: photoPreview, // This sends the Base64 string (or handle Cloudinary upload here)
     };
 
-    
     console.log("Donor Schema Ready Data:", finalData);
     try {
       const res = await axiosSecure.post("/donor/find-donor", finalData);

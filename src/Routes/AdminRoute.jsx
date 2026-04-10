@@ -8,6 +8,7 @@ const AdminRoute = ({ children }) => {
   const { user, loading } = UseAuth();
   const location = useLocation();
 
+  
   if (loading) return <Loading />;
   if (!user) return <Navigate to="/admin/login" state={location.pathname} />;
 

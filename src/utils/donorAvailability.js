@@ -22,6 +22,7 @@ export const addUnavailableDonor = (donorId) => {
   return map;
 };
 
+
 export const removeUnavailableDonor = (donorId) => {
   const map = getUnavailableDonorMap();
   delete map[donorId];

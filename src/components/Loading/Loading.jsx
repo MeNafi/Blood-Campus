@@ -3,6 +3,7 @@ import logo from "../../assets/logo_Grp.png";
 
 const Loading = () => {
     return (
+        
         <div className="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center font-sans">
             
             {/* 1. Blood Drop Animation Container */}

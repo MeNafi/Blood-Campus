@@ -10,6 +10,7 @@ const Navbar = () => {
   const { signOutUser, user } = UseAuth();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All List", path: "/donor-list" },

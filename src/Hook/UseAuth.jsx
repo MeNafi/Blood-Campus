@@ -7,4 +7,5 @@ const UseAuth = () => {
     return authInfo;
 };
 
+
 export default UseAuth;

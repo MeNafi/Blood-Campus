@@ -1,6 +1,7 @@
 const STORAGE_KEY = "bloodCampusUnavailableDonors";
 
 export const getUnavailableDonorMap = () => {
+  
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
@@ -8,6 +9,7 @@ export const getUnavailableDonorMap = () => {
     return {};
   }
 };
+
 
 export const setUnavailableDonorMap = (map) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(map));

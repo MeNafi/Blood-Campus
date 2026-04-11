@@ -13,6 +13,7 @@ const FindDonor = () => {
     subArea: "",
   });
 
+
   useEffect(() => {
     fetch("/location.json")
       .then((res) => res.json())
@@ -31,6 +32,7 @@ const FindDonor = () => {
     },
   });
 
+  
   const donorList = response?.data?.donors || [];
 
   if (isError) {

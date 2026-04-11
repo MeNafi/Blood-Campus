@@ -6,6 +6,7 @@ import UseAxiosSecure from "../../Hook/UseAxiosSecure";
 import DonorCardWide from "../../components/DonorCardWide/DonorCardWide";
 import { addUnavailableDonor, cleanupExpiredUnavailable, getRemainingDays, removeUnavailableDonor } from "../../utils/donorAvailability";
 
+
 const DonorList = () => {
   const axiosSecure = UseAxiosSecure();
   const [locationData, setLocationData] = useState({});
@@ -16,6 +17,7 @@ const DonorList = () => {
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const [filters, setFilters] = useState({ city: "", area: "", subArea: "" });
 
+
   useEffect(() => {
     fetch("/location.json")
       .then((res) => res.json())
@@ -23,6 +25,7 @@ const DonorList = () => {
       .catch((err) => console.error("Error loading locations:", err));
     setUnavailableMap(cleanupExpiredUnavailable());
   }, []);
+
 
   const { data: response, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["donorList", filters, selectedBlood],
@@ -35,12 +38,14 @@ const DonorList = () => {
     },
   });
 
+
   const donorList = useMemo(() => {
     if (Array.isArray(response?.data?.donors)) return response.data.donors;
     if (Array.isArray(response?.donors)) return response.donors;
     if (Array.isArray(response?.data)) return response.data;
     return [];
   }, [response]);
+
   const availableDonors = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return donorList
@@ -54,6 +59,8 @@ const DonorList = () => {
         return searchable.includes(term);
       });
   }, [donorList, unavailableMap, searchTerm]);
+
+
   const unableDonors = useMemo(() => donorList.filter((donor) => unavailableMap[donor?._id]), [donorList, unavailableMap]);
   const currentList = listMode === "able" ? availableDonors : unableDonors;
 
@@ -85,17 +92,20 @@ const DonorList = () => {
       setUnavailableMap(removeUnavailableDonor(donorId));
       return;
     }
+
     Swal.fire({
       icon: "question",
       title: "Move to unable donor?",
       text: "Donor will stay unavailable for 3 months.",
       showCancelButton: true,
       confirmButtonColor: "#FF2C2C",
-    }).then((result) => {
+    })
+     .then((result) => {
       if (result.isConfirmed) setUnavailableMap(addUnavailableDonor(donorId));
     });
   };
 
+  
   return (
     <div className="min-h-screen bg-brand-bg pb-12">
       <div className="bg-primary px-4 pb-16 pt-10 text-center">

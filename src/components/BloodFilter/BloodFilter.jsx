@@ -6,6 +6,7 @@ const BloodFilter = ({ onFilterChange, onSearchChange }) => {
     const [activeGroup, setActiveGroup] = useState('A+');
     const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
+    
     const handleGroupClick = (group) => {
         setActiveGroup(group);
         if (onFilterChange) onFilterChange(group);

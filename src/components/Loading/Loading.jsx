@@ -2,7 +2,9 @@ import React from "react";
 import logo from "../../assets/logo_Grp.png";
 
 const Loading = () => {
+
   return (
+
     <div className="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center font-sans">
       <div className="relative w-24 h-24 mb-8 flex items-end justify-center">
         <div className="absolute w-16 h-16 bg-[#e53935] rounded-full opacity-20"></div>
@@ -18,6 +20,7 @@ const Loading = () => {
           Connecting Donors
         </p>
 
+
         <div className="flex gap-1 justify-center pt-3">
           <div className="w-2 h-2 rounded-full bg-[#e53935] animate-bounce delay-75"></div>
           <div className="w-2 h-2 rounded-full bg-[#e53935] animate-bounce delay-150"></div>
@@ -25,6 +28,7 @@ const Loading = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 

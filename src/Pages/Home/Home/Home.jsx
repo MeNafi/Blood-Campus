@@ -9,9 +9,11 @@ import Swal from "sweetalert2";
 const Home = () => {
   const { user } = UseAuth();
 
+
   React.useEffect(() => {
     if (user) return;
     const timer = setTimeout(() => {
+
       Swal.fire({
         icon: "info",
         title: "Login to find blood",
@@ -23,6 +25,7 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, [user]);
 
+
   return (
     <>
       <HeroSection />
@@ -32,5 +35,6 @@ const Home = () => {
     </>
   );
 };
+
 
 export default Home;

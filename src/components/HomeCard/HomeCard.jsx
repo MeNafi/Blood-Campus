@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import UseAuth from "../../Hook/UseAuth";
 import Swal from "sweetalert2";
 
-export const HomeCard = () => {
+const HomeCard = () => {
   const navigate = useNavigate();
   const { user } = UseAuth();
 

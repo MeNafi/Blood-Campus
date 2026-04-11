@@ -1,7 +1,7 @@
 import React from "react";
 import { FaPhoneAlt } from "react-icons/fa";
 
-export const DonorCardWide = ({ donor, isUnavailable = false, remainingDays = 0, onToggleUnavailable }) => {
+const DonorCardWide = ({ donor, isUnavailable = false, remainingDays = 0, onToggleUnavailable }) => {
   const {
     name,
     fullName,

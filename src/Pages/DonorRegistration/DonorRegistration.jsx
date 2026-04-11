@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Added useState for photo preview
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   FaRegUser,
@@ -6,7 +6,7 @@ import {
   FaPhone,
   FaMapMarkerAlt,
   FaWeight,
-  FaCamera, // Added for photo icon
+  FaCamera,
 } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import {
@@ -20,8 +20,8 @@ import UseAxiosSecure from "../../Hook/UseAxiosSecure";
 import Swal from "sweetalert2";
 
 const DonorRegistration = () => {
-  const [photoPreview, setPhotoPreview] = useState(null); // Local state for preview
-  
+  const [photoPreview, setPhotoPreview] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -29,9 +29,8 @@ const DonorRegistration = () => {
     formState: { errors },
   } = useForm();
 
-  const axiosSecure = UseAxiosSecure(); // Renamed to avoid confusion
+  const axiosSecure = UseAxiosSecure();
 
-  // Handle Photo Preview Logic
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -60,14 +59,13 @@ const DonorRegistration = () => {
 
   const onSubmit = async (data) => {
     const fullAddress = `${data.sector}, ${data.area}, ${data.city}`;
-    
-    // Final object matching Mongoose Schema
+
     const finalData = {
       ...data,
       presentAddress: fullAddress,
       weight: Number(data.weight),
       totalDonations: 0,
-      profileImage: photoPreview, // This sends the Base64 string (or handle Cloudinary upload here)
+      profileImage: photoPreview,
     };
 
     console.log("Donor Schema Ready Data:", finalData);
@@ -92,8 +90,6 @@ const DonorRegistration = () => {
   return (
     <div className="min-h-screen bg-[#fcfcfc] flex items-center justify-center py-12 px-4 font-sans text-gray-900">
       <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
-        
-        {/* Header */}
         <div className="bg-gray-900 px-8 py-10 flex flex-col md:flex-row items-center justify-between">
           <div>
             <h1 className="text-3xl font-black text-white text-center md:text-left">
@@ -105,8 +101,6 @@ const DonorRegistration = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-8">
-          
-          {/* NEW SECTION: Photo Upload */}
           <div className="flex flex-col items-center justify-center space-y-4 pb-4 border-b border-gray-100">
             <div className="relative w-32 h-32 group">
               <div className="w-full h-full rounded-full border-4 border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center shadow-inner">
@@ -118,9 +112,9 @@ const DonorRegistration = () => {
               </div>
               <label className="absolute bottom-1 right-1 bg-red-600 p-3 rounded-full text-white cursor-pointer hover:bg-red-700 transition-colors shadow-lg">
                 <FaCamera className="text-sm" />
-                <input 
-                  type="file" 
-                  className="hidden" 
+                <input
+                  type="file"
+                  className="hidden"
                   accept="image/*"
                   onChange={handlePhotoChange}
                 />
@@ -129,7 +123,6 @@ const DonorRegistration = () => {
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Upload Profile Photo</p>
           </div>
 
-          {/* Section 1: Basic & Academic */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative group">
               <label className={labelStyle}>Full Name</label>
@@ -156,7 +149,6 @@ const DonorRegistration = () => {
             </div>
           </div>
 
-          {/* Section 2: Medical Details */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="relative">
               <label className={labelStyle}>Blood Group</label>
@@ -202,7 +194,6 @@ const DonorRegistration = () => {
             </div>
           </div>
 
-          {/* Section 3: Cascading Address */}
           <section className="bg-gray-50/80 p-6 rounded-3xl border-2 border-dashed border-gray-200">
             <label className="text-[12px] font-black text-gray-800 mb-4 flex items-center gap-2">
               <FaMapMarkerAlt className="text-red-500" /> PRESENT ADDRESS SELECTION
@@ -237,7 +228,6 @@ const DonorRegistration = () => {
             </div>
           </section>
 
-          {/* Section 4: Privacy */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-gray-900 text-white p-6 rounded-2xl">
             <div className="flex items-center gap-3">
               <span className="text-xs font-bold text-gray-400 uppercase">Privacy Mode:</span>

@@ -39,12 +39,9 @@ const Login = () => {
       className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-4"
       style={{ backgroundImage: `url(${bgImg})` }}
     >
-      {/* Semi-transparent Overlay for that "washed out" look in the photo */}
       <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
 
-      {/* Main Card */}
       <div className="relative z-10 w-full max-w-[500px] bg-rose-50/90 rounded-[32px] p-8 md:p-14 shadow-2xl border border-white">
-        {/* Logo Section */}
         <div className="flex flex-col items-center mb-10 text-center">
           <div className="flex items-center gap-2 mb-2">
             <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto" />
@@ -54,9 +51,7 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Email Field */}
           <div className="form-control w-full">
             <label className="label py-1">
               <span className="label-text font-semibold text-gray-700 text-lg">
@@ -85,7 +80,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Show Error Message */}
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.email.message}
@@ -93,7 +87,6 @@ const Login = () => {
             )}
           </div>
 
-          {/* Password Field */}
           <div className="form-control w-full">
             <label className="label py-1">
               <span className="label-text font-semibold text-gray-700 text-lg">
@@ -101,7 +94,6 @@ const Login = () => {
               </span>
             </label>
             <div className="relative">
-              {/* Updated with React Icon */}
               <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 text-2xl z-10" />
 
               <input
@@ -125,7 +117,6 @@ const Login = () => {
                 {showPassword ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
               </button>
             </div>
-            {/* Error message for validation feedback */}
             {errors.password && (
               <span className="text-red-500 text-sm mt-1 ml-2">
                 {errors.password.message}
@@ -133,7 +124,6 @@ const Login = () => {
             )}
           </div>
 
-          {/* Forgot Password */}
           <div className="flex justify-end pr-1">
             <button
               type="button"
@@ -143,7 +133,6 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Sign In Button */}
           <button
             type="submit"
             className="btn w-full h-14 bg-[#ef4444] hover:bg-red-600 text-white border-none rounded-2xl text-xl font-bold shadow-lg capitalize tracking-wide mt-2"
@@ -152,13 +141,11 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="divider before:bg-gray-300 after:bg-gray-300 my-8"></div>
 
-        {/* Footer */}
         <div className="text-center">
           <p className="text-gray-700 text-lg">
-            Don't have any account ?{" "}
+            Don&apos;t have any account?{" "}
             <Link to={"/register"} className="text-[#ef4444] font-bold hover:underline">
               Create one now
             </Link>

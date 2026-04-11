@@ -3,7 +3,7 @@ import Login from "../Pages/Auth/Login/Login";
 import HomeLayout from "../Pages/Home/HomeLayout/HomeLayout";
 import Registration from "../Pages/Auth/Registration/Registration";
 import Home from "../Pages/Home/Home/Home";
-import DonorRegistration from "../Pages/donorRegistration/DonorRegistration";
+import DonorRegistration from "../Pages/DonorRegistration/DonorRegistration";
 import PrivateRoute from "./PrivateRoute";
 import FindDonor from "../Pages/FindDonor/FindDonor";
 import DonorList from "../Pages/DonorList/DonorList";
@@ -43,15 +43,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/donor-list",
-        element: <PrivateRoute>
-          <DonorList />
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <DonorList />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/find-donor",
-        element: <PrivateRoute>
-          <FindDonor />
-        </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <FindDonor />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/unable-donor",
@@ -72,7 +76,7 @@ export const router = createBrowserRouter([
         },
         element: (
           <PrivateRoute>
-            <DonorRegistration></DonorRegistration>
+            <DonorRegistration />
           </PrivateRoute>
         ),
       },

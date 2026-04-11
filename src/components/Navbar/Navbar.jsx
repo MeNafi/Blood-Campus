@@ -10,12 +10,13 @@ const Navbar = () => {
   const { signOutUser, user } = UseAuth();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All List", path: "/donor-list" },
+    { name: "Find Blood", path: "/find-donor" },
     { name: "Register Donor", path: "/donor-register" },
   ];
+
   const isAdmin = ADMIN_EMAILS.includes(user?.email || "");
   const notifications = [
     "Welcome to BloodCampus.",

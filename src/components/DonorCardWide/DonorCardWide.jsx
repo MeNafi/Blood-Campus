@@ -2,6 +2,8 @@ import React from "react";
 import { FaPhoneAlt } from "react-icons/fa";
 
 const DonorCardWide = ({ donor, isUnavailable = false, remainingDays = 0, onToggleUnavailable }) => {
+  
+  // Destructure donor properties with fallbacks
   const {
     name,
     fullName,

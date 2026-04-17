@@ -11,6 +11,16 @@ import AdminLogin from "../Pages/Auth/AdminLogin/AdminLogin";
 import AdminDashboard from "../Pages/Admin/AdminDashboard";
 import AdminRoute from "./AdminRoute";
 import UnableDonor from "../Pages/UnableDonor/UnableDonor";
+import DashboardLayout from "../Dashboard/layout/DashboardLayout";
+import StudentOverview from "../Dashboard/student/pages/StudentOverview";
+import FindBlood from "../Dashboard/student/pages/FindBlood";
+import DonationHistory from "../Dashboard/student/pages/DonationHistory";
+import About from "../Dashboard/student/pages/About";
+import Settings from "../Dashboard/student/pages/Settings";
+import AdminOverview from "../Dashboard/admin/pages/AdminOverview";
+import DonorManagement from "../Dashboard/admin/pages/DonorManagement";
+import VerificationQueue from "../Dashboard/admin/pages/VerificationQueue";
+import { Navigate } from "react-router";
 
 export const router = createBrowserRouter([
   {
@@ -35,11 +45,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "/admin/dashboard",
+        element: <Navigate to="/admin" replace />,
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <PrivateRoute>
+            <DashboardLayout variant="student" />
+          </PrivateRoute>
+        ),
+        children: [
+          { index: true, Component: StudentOverview },
+          { path: "find-blood", Component: FindBlood },
+          { path: "donation-history", Component: DonationHistory },
+          { path: "about", Component: About },
+          { path: "settings", Component: Settings },
+        ],
+      },
+      {
+        path: "/admin",
         element: (
           <AdminRoute>
-            <AdminDashboard />
+            <DashboardLayout variant="admin" />
           </AdminRoute>
         ),
+        children: [
+          { index: true, Component: AdminOverview },
+          { path: "donors", Component: DonorManagement },
+          { path: "verification", Component: VerificationQueue },
+        ],
       },
       {
         path: "/donor-list",

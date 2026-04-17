@@ -6,6 +6,7 @@ import FeatureSlider from "../../../components/FeatureSlider/FeatureSlider";
 import UseAuth from "../../../Hook/UseAuth";
 import Swal from "sweetalert2";
 
+
 const Home = () => {
   const { user } = UseAuth();
 

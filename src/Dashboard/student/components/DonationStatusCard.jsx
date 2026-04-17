@@ -45,13 +45,13 @@ const DonationStatusCard = () => {
     if (el?.close) el.close();
   };
 
-  const handleToggle = (checked) => {
-    if (checked) {
-      openModal();
-      return;
-    }
+  const markAble = () => {
     const next = setAbleNow();
     setAvailabilityState(next);
+  };
+
+  const markUnable = () => {
+    openModal();
   };
 
   const handleConfirmUnable = () => {
@@ -84,15 +84,35 @@ const DonationStatusCard = () => {
           </div>
         </div>
 
-        <label className="flex items-center justify-between gap-4 rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-          <span className="text-sm font-bold text-gray-800">Mark as unable</span>
-          <input
-            type="checkbox"
-            className="toggle toggle-error"
-            checked={status === "unable"}
-            onChange={(e) => handleToggle(e.target.checked)}
-          />
-        </label>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Availability</p>
+          <div className="inline-flex w-full flex-wrap gap-2 sm:w-auto">
+            <button
+              type="button"
+              onClick={markAble}
+              className={[
+                "inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-primary/30",
+                status === "able"
+                  ? "border-primary bg-primary text-white shadow-sm hover:bg-red-600"
+                  : "border-primary bg-primary/90 text-white hover:bg-red-600",
+              ].join(" ")}
+            >
+              Able
+            </button>
+            <button
+              type="button"
+              onClick={markUnable}
+              className={[
+                "inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-primary/30",
+                status === "unable"
+                  ? "border-primary bg-primary text-white hover:bg-red-600 shadow-sm"
+                  : "border-primary bg-primary/90 text-white hover:bg-red-600",
+              ].join(" ")}
+            >
+              Unable
+            </button>
+          </div>
+        </div>
       </div>
 
       <dialog id="donation_status_modal" className="modal">
@@ -131,10 +151,14 @@ const DonationStatusCard = () => {
           </div>
 
           <div className="modal-action">
-            <button type="button" onClick={() => setAbleNow() && setAvailabilityState(getAvailability())} className="btn rounded-2xl border border-gray-200 bg-white hover:bg-gray-50">
+            <button
+              type="button"
+              onClick={() => setAbleNow() && setAvailabilityState(getAvailability())}
+              className="btn rounded-full border border-gray-200 bg-white font-bold text-primary transition hover:bg-gray-100"
+            >
               Keep Able
             </button>
-            <button type="button" onClick={handleConfirmUnable} className="btn rounded-2xl border-none bg-primary text-white hover:bg-red-600">
+            <button type="button" onClick={handleConfirmUnable} className="btn rounded-full border-none bg-primary font-bold text-white transition hover:bg-red-600">
               Confirm
             </button>
           </div>

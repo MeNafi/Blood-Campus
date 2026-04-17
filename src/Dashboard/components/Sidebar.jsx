@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import {
   LayoutDashboard,
   Droplet,
@@ -9,6 +9,10 @@ import {
   LineChart,
   Users,
   BadgeCheck,
+  User,
+  CreditCard,
+  Shield,
+  ChevronDown,
 } from "lucide-react";
 
 const studentItems = [
@@ -16,7 +20,12 @@ const studentItems = [
   { to: "/dashboard/find-blood", label: "Find Blood", icon: Droplet },
   { to: "/dashboard/donation-history", label: "Donation History", icon: History },
   { to: "/dashboard/about", label: "About", icon: Info },
-  { to: "/dashboard/settings", label: "Settings", icon: Settings },
+];
+
+const settingsItems = [
+  { to: "/dashboard/settings/profile", label: "Profile", icon: User, end: true },
+  { to: "/dashboard/settings/account", label: "Account", icon: CreditCard },
+  { to: "/dashboard/settings/security", label: "Security", icon: Shield },
 ];
 
 const adminItems = [
@@ -27,6 +36,10 @@ const adminItems = [
 
 const Sidebar = ({ variant = "student", onNavigate }) => {
   const items = variant === "admin" ? adminItems : studentItems;
+  const location = useLocation();
+
+  // Logic to detect if the user is currently in settings
+  const isSettingsPath = location.pathname.startsWith("/dashboard/settings");
 
   return (
     <aside className="flex h-full w-72 flex-col border-r border-gray-100 bg-white">
@@ -73,6 +86,65 @@ const Sidebar = ({ variant = "student", onNavigate }) => {
               </NavLink>
             </li>
           ))}
+
+          {variant !== "admin" ? (
+            <li>
+              <NavLink
+                to="/dashboard/settings/profile"
+                onClick={onNavigate}
+                className={() =>
+                  [
+                    "group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold transition",
+                    isSettingsPath ? "bg-primary text-white shadow-sm" : "text-gray-700 hover:bg-gray-50",
+                  ].join(" ")
+                }
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={[
+                      "flex h-9 w-9 items-center justify-center rounded-lg",
+                      isSettingsPath ? "bg-white/15" : "bg-gray-50 text-gray-600 group-hover:bg-white",
+                    ].join(" ")}
+                  >
+                    <Settings size={18} className={isSettingsPath ? "text-white" : ""} />
+                  </span>
+                  <span className="truncate">Settings</span>
+                </div>
+                <ChevronDown size={16} className={`${isSettingsPath ? "rotate-180" : ""} transition-transform`} />
+              </NavLink>
+
+              {/* Collapsible Sub-menu with Skeleton/Hover effect */}
+              {isSettingsPath && (
+                <ul className="mt-1 space-y-1 pl-3">
+                  {settingsItems.map(({ to, label, icon: ChildIcon, end }) => (
+                    <li key={to}>
+                      <NavLink
+                        end={end}
+                        to={to}
+                        onClick={onNavigate}
+                        className={({ isActive }) =>
+                          [
+                            "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition",
+                            isActive ? "bg-primary/10 text-primary" : "text-gray-600 hover:bg-gray-50 hover:text-gray-800",
+                          ].join(" ")
+                        }
+                      >
+                        <span
+                          className={[
+                            "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
+                            "bg-gray-50 text-gray-600 group-hover:bg-white", // The "skeleton" background look
+                          ].join(" ")}
+                        >
+                          <ChildIcon size={16} />
+                        </span>
+                        <span className="truncate">{label}</span>
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ) : null}
         </ul>
       </nav>
 
@@ -92,4 +164,3 @@ const Sidebar = ({ variant = "student", onNavigate }) => {
 };
 
 export default Sidebar;
-

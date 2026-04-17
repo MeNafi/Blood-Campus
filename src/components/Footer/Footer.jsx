@@ -43,9 +43,13 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Your mail"
-                className="w-full rounded-l-lg border-none px-3 py-2 text-sm text-gray-700 outline-none"
+                className="w-full rounded-l-lg border-none bg-white px-3 py-2 text-sm text-gray-700 outline-none"
               />
-              <button className="rounded-r-lg bg-white px-4 text-primary">Join</button>
+              {/* The Separator Line */}
+  
+             <button className="bg-primary border border-white/20 rounded-r-2xl px-6 py-2 text-sm font-bold text-white transition-all hover:bg-red-600 hover:border-white/40 active:scale-95 shrink-0">
+  Join
+</button>
             </div>
             <div className="mt-4 flex items-center gap-3">
               <a href="/" className="rounded bg-white/20 p-2"><FaFacebookF size={14} /></a>

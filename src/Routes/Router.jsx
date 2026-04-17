@@ -21,6 +21,7 @@ import AdminOverview from "../Dashboard/admin/pages/AdminOverview";
 import DonorManagement from "../Dashboard/admin/pages/DonorManagement";
 import VerificationQueue from "../Dashboard/admin/pages/VerificationQueue";
 import { Navigate } from "react-router";
+import Goodbye from "../Pages/Goodbye/Goodbye";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
         Component: AdminLogin,
       },
       {
+        path: "/goodbye",
+        Component: Goodbye,
+      },
+      {
         path: "/admin/dashboard",
         element: <Navigate to="/admin" replace />,
       },
@@ -59,7 +64,16 @@ export const router = createBrowserRouter([
           { path: "find-blood", Component: FindBlood },
           { path: "donation-history", Component: DonationHistory },
           { path: "about", Component: About },
-          { path: "settings", Component: Settings },
+          {
+            path: "settings",
+            Component: Settings,
+            children: [
+              { index: true, element: <Navigate to="/dashboard/settings/profile" replace /> },
+              { path: "profile", lazy: async () => ({ Component: (await import("../Dashboard/student/settings/tabs/ProfileTab")).default }) },
+              { path: "account", lazy: async () => ({ Component: (await import("../Dashboard/student/settings/tabs/AccountTab")).default }) },
+              { path: "security", lazy: async () => ({ Component: (await import("../Dashboard/student/settings/tabs/SecurityTab")).default }) },
+            ],
+          },
         ],
       },
       {

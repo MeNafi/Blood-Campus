@@ -2,7 +2,7 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import logo from "../../assets/logo_Grp.png";
 import UseAuth from "../../Hook/UseAuth";
-import { Bell, Menu, X } from "lucide-react";
+import { Bell, Menu, Settings, LayoutDashboard, X } from "lucide-react";
 import { ADMIN_EMAILS } from "../../config/adminConfig";
 
 const Navbar = () => {
@@ -71,11 +71,27 @@ const Navbar = () => {
         <div className="navbar-end gap-2">
           {user ? (
             <>
+              <Link
+                to="/dashboard"
+                className="btn btn-sm btn-ghost rounded-full text-white hover:bg-white/10"
+                aria-label="Open dashboard"
+                title="Dashboard"
+              >
+                <LayoutDashboard size={18} />
+              </Link>
+              <Link
+                to="/dashboard/settings"
+                className="btn btn-sm btn-ghost rounded-full text-white hover:bg-white/10"
+                aria-label="Open settings"
+                title="Settings"
+              >
+                <Settings size={18} />
+              </Link>
               <div className="dropdown dropdown-end">
                 <button tabIndex={0} className="btn btn-sm btn-ghost rounded-full text-white hover:bg-white/10">
                   <Bell size={18} />
                 </button>
-                <ul tabIndex={0} className="menu dropdown-content z-[1] mt-3 w-72 rounded-box bg-white p-2 text-gray-700 shadow">
+                <ul tabIndex={0} className="menu dropdown-content z-1 mt-3 w-72 rounded-box bg-white p-2 text-gray-700 shadow">
                   {notifications.map((note) => (
                     <li key={note}>
                       <span className="text-xs">{note}</span>
@@ -130,6 +146,32 @@ const Navbar = () => {
                 </NavLink>
               </li>
             ))}
+            {user ? (
+              <>
+                <li>
+                  <NavLink
+                    onClick={() => setIsOpen(false)}
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                      `block rounded-lg px-3 py-2 text-sm font-medium ${isActive ? "bg-white/20" : "hover:bg-white/10"}`
+                    }
+                  >
+                    Dashboard
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    onClick={() => setIsOpen(false)}
+                    to="/dashboard/settings"
+                    className={({ isActive }) =>
+                      `block rounded-lg px-3 py-2 text-sm font-medium ${isActive ? "bg-white/20" : "hover:bg-white/10"}`
+                    }
+                  >
+                    Settings
+                  </NavLink>
+                </li>
+              </>
+            ) : null}
           </ul>
         </div>
       )}

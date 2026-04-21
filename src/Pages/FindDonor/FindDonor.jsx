@@ -24,14 +24,14 @@ const FindDonor = () => {
       .catch((err) => console.error("Error loading locations:", err));
   }, []);
 
-  // Tanstack Query (Depends on filters and page)
+
   const { data: response, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["donors", filters, page], 
     queryFn: async () => {
       const activeParams = Object.fromEntries(
         Object.entries(filters).filter(([, value]) => value !== "")
       );
-      // Backend expects 'page' and 'limit'
+      
       const res = await axiosSecure.get("/donor/find-donor", { 
         params: { ...activeParams, page, limit: 10 } 
       });

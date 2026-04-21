@@ -1,158 +1,137 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { 
+  ResponsiveContainer, LineChart, Line, CartesianGrid, 
+  XAxis, YAxis, Tooltip, BarChart, Bar, PieChart, 
+  Pie, Cell 
+} from "recharts";
+import { Users, Clock, Zap, Activity, Info } from "lucide-react";
 import UseAxiosSecure from "../../../Hook/UseAxiosSecure";
 
 const AdminOverview = () => {
   const axiosSecure = UseAxiosSecure();
 
-  const donorsQuery = useQuery({
-    queryKey: ["adminDonors"],
+  // 1. Fetching Analytics based on your backend controller
+  const { data: analytics, isLoading, isError } = useQuery({
+    queryKey: ["adminAnalytics"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/donor/find-donor");
-      return res.data;
+      // Endpoint must match your router.route("/admin-analytics")
+      const res = await axiosSecure.get("/donor/admin-analytics");
+      
+      /** * CRITICAL FIX: 
+       * Your backend returns: { statusCode, data, message }
+       * Axios returns: { data: { statusCode, data, message } }
+       * So we return res.data.data to get the actual counts/arrays
+       */
+      return res.data.data; 
     },
+    refetchOnWindowFocus: false,
   });
 
-  const donorList = React.useMemo(() => donorsQuery.data?.data?.donors ?? [], [donorsQuery.data]);
+  // 2. Formatting Blood Group Distribution for the Pie Chart
+  const pieData = useMemo(() => {
+    if (!analytics?.bloodGroupDistribution) return [];
+    return analytics.bloodGroupDistribution.map(item => ({
+      name: item._id || "N/A",
+      value: item.count
+    }));
+  }, [analytics]);
 
-  const growth = React.useMemo(
-    () => [
-      { name: "Mon", visitors: 420 },
-      { name: "Tue", visitors: 680 },
-      { name: "Wed", visitors: 510 },
-      { name: "Thu", visitors: 920 },
-      { name: "Fri", visitors: 860 },
-      { name: "Sat", visitors: 640 },
-      { name: "Sun", visitors: 740 },
-    ],
-    [],
-  );
+  const COLORS = ["#EF4444", "#3B82F6", "#F59E0B", "#10B981", "#6366F1", "#EC4899", "#8B5CF6", "#64748B"];
 
-  const impact = React.useMemo(
-    () => [
-      { name: "Week 1", donations: 24, requests: 38 },
-      { name: "Week 2", donations: 31, requests: 42 },
-      { name: "Week 3", donations: 28, requests: 36 },
-      { name: "Week 4", donations: 44, requests: 51 },
-    ],
-    [],
-  );
-
-  const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
-  const pieData = React.useMemo(() => {
-    const counts = Object.fromEntries(bloodGroups.map((b) => [b, 0]));
-    for (const d of donorList) {
-      const bg = d?.bloodGroup;
-      if (bg && counts[bg] !== undefined) counts[bg] += 1;
-    }
-    const items = bloodGroups.map((b) => ({ name: b, value: counts[b] }));
-    const total = items.reduce((s, x) => s + x.value, 0);
-    return total > 0 ? items : bloodGroups.map((b, idx) => ({ name: b, value: idx % 2 === 0 ? 12 : 8 }));
-  }, [donorList]);
-
-  const colors = ["#FF2C2C", "#FB7185", "#F59E0B", "#10B981", "#06B6D4", "#6366F1", "#A855F7", "#64748B"];
+  if (isLoading) return <div className="h-96 flex items-center justify-center animate-pulse text-gray-400 font-black">SYNCING WITH DATABASE...</div>;
+  if (isError) return <div className="p-10 bg-red-50 text-red-600 rounded-3xl">Failed to load analytics. Check backend connection.</div>;
 
   return (
-    <section className="space-y-6">
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-black text-gray-900">Admin Analytics</h1>
-        <p className="mt-2 text-sm text-gray-600">Platform health, donor distribution, and impact metrics.</p>
+    <div className="space-y-6 pb-20">
+      {/* Header */}
+      <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm">
+        <h1 className="text-3xl font-black italic tracking-tighter text-gray-900 uppercase">System Analytics</h1>
+        <p className="text-sm font-medium text-gray-500">Live data overview of the BloodCampus platform.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Total donors</p>
-          <p className="mt-2 text-3xl font-black text-gray-900">{donorList.length || "—"}</p>
-          <p className="mt-1 text-sm text-gray-600">From your active donor directory.</p>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Pending verification</p>
-          <p className="mt-2 text-3xl font-black text-gray-900">8</p>
-          <p className="mt-1 text-sm text-gray-600">Mock queue until backend exists.</p>
-        </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Requests today</p>
-          <p className="mt-2 text-3xl font-black text-gray-900">39</p>
-          <p className="mt-1 text-sm text-gray-600">Demo metric.</p>
-        </div>
+      {/* Top Stat Cards - Linked to your countDocuments() results */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard 
+          icon={<Users size={20} />} 
+          title="Total Donors" 
+          value={analytics?.totalDonors} 
+          sub="Registered in system" 
+        />
+        <StatCard 
+          icon={<Clock size={20} />} 
+          title="Pending Review" 
+          value={analytics?.pendingVerification} 
+          sub="Requires approval" 
+        />
+        <StatCard 
+          icon={<Zap size={20} />} 
+          title="Today's Requests" 
+          value={analytics?.requestsToday} 
+          sub="New emergency posts" 
+        />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-extrabold uppercase tracking-[0.22em] text-gray-400">Platform growth</h2>
-            <span className="text-xs font-bold text-gray-500">Visitors</span>
-          </div>
-          <div className="mt-5 h-64">
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Growth Chart - Uses your growthData aggregate */}
+        <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm">
+          <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Weekly Registration Trend</h3>
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={growth}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                <XAxis dataKey="name" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip />
-                <Line type="monotone" dataKey="visitors" stroke="#FF2C2C" strokeWidth={3} dot={false} />
+              <LineChart data={analytics?.growthData || []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+                <XAxis dataKey="_id" stroke="#9CA3AF" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#9CA3AF" fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
+                <Line type="monotone" dataKey="count" stroke="#EF4444" strokeWidth={4} dot={{ r: 4, fill: "#EF4444" }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-extrabold uppercase tracking-[0.22em] text-gray-400">Donation impact</h2>
-            <span className="text-xs font-bold text-gray-500">Donations vs requests</span>
-          </div>
-          <div className="mt-5 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={impact}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-                <XAxis dataKey="name" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip />
-                <Bar dataKey="donations" fill="#FF2C2C" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="requests" fill="#111827" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-extrabold uppercase tracking-[0.22em] text-gray-400">Blood group distribution</h2>
-          <span className="text-xs font-bold text-gray-500">{donorsQuery.isLoading ? "Loading…" : "Derived from donors"}</span>
-        </div>
-        <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="h-72 lg:col-span-5">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={70} outerRadius={110} paddingAngle={2}>
-                  {pieData.map((_, idx) => (
-                    <Cell key={idx} fill={colors[idx % colors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="lg:col-span-7">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {pieData.map((x, idx) => (
-                <div key={x.name} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colors[idx % colors.length] }} />
-                    <p className="text-sm font-bold text-gray-900">{x.name}</p>
-                  </div>
-                  <p className="mt-2 text-2xl font-black text-gray-900">{x.value}</p>
+        {/* Blood Group Pie Chart - Uses your bloodGroupDistribution aggregate */}
+        <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm">
+          <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Donor Distribution</h3>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="h-64 w-full md:w-1/2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={5}>
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Custom Legend */}
+            <div className="grid grid-cols-2 gap-2 w-full md:w-1/2">
+              {pieData.map((entry, index) => (
+                <div key={entry.name} className="flex items-center gap-2 p-2 rounded-xl bg-gray-50/50 border border-gray-100">
+                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                  <span className="text-xs font-bold text-gray-700">{entry.name}: {entry.value}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
-export default AdminOverview;
+// Reusable Stat Card
+const StatCard = ({ icon, title, value, sub }) => (
+  <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm transition-all hover:border-red-100">
+    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
+      {icon}
+    </div>
+    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{title}</p>
+    <p className="text-4xl font-black tracking-tighter text-gray-900">{value ?? 0}</p>
+    <p className="mt-1 text-xs font-bold text-gray-400 italic">{sub}</p>
+  </div>
+);
 
+export default AdminOverview;

@@ -9,7 +9,7 @@ const tabs = [
 
 const SettingsShell = () => {
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 max-w-[1400px] mx-auto">
       {/* Header Section */}
       <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-black text-gray-900">Settings</h1>
@@ -20,9 +20,32 @@ const SettingsShell = () => {
 
       {/* Content Area */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* We keep the mobile tabs for better UX on small screens */}
+        
+        {/* Desktop Sidebar Tabs (Visible only on LG screens) */}
+        <div className="hidden lg:block lg:col-span-3">
+          <nav className="flex flex-col gap-2 sticky top-6">
+            {tabs.map((t) => (
+              <NavLink
+                key={t.to}
+                to={t.to}
+                end={t.end}
+                className={({ isActive }) =>
+                  `px-6 py-4 rounded-2xl text-sm font-bold transition-all ${
+                    isActive 
+                      ? "bg-white border border-gray-100 shadow-sm text-red-600" 
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`
+                }
+              >
+                {t.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        {/* Mobile Tabs (Hidden on LG screens) */}
         <div className="lg:hidden col-span-12">
-          <div className="tabs tabs-boxed w-full rounded-2xl bg-gray-50 p-1">
+          <div className="tabs tabs-boxed w-full rounded-2xl bg-gray-50 p-1 flex">
             {tabs.map((t) => (
               <NavLink
                 key={t.to}
@@ -38,8 +61,8 @@ const SettingsShell = () => {
           </div>
         </div>
 
-        {/* Main Settings Form/Content */}
-        <div className="lg:col-span-12 bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+        {/* Main Settings Form/Content - Takes 9 columns on desktop, 12 on mobile */}
+        <div className="col-span-12 lg:col-span-9 bg-white rounded-3xl border border-gray-100 p-4 sm:p-6 lg:p-10 shadow-sm">
           <Outlet />
         </div>
       </div>

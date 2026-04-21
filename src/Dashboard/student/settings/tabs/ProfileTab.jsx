@@ -1,189 +1,172 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Camera, BadgeCheck } from "lucide-react";
+import { Camera, Droplets, MapPin, Weight, User, Zap, Hash, Phone, Building, Scale, Info } from "lucide-react";
 import UseAuth from "../../../../Hook/UseAuth";
-import SettingsSkeleton from "../components/SettingsSkeleton";
-import StickySaveBar from "../components/StickySaveBar";
-import { useSettingsApi } from "../settingsApi";
-
-const schema = z.object({
-  fullName: z.string().trim().min(2, "Name is required"),
-  bio: z.string().trim().max(280, "Bio must be under 280 characters").optional().or(z.literal("")),
-  email: z.string().email("Invalid email"),
-  profileImage: z.string().optional().or(z.literal("")),
-});
-
-const normalizeMe = (me, fallbackUserEmail) => {
-  const source = me?.data || me || {};
-  return {
-    fullName: source?.fullName || source?.name || "",
-    bio: source?.bio || "",
-    email: source?.email || fallbackUserEmail || "",
-    profileImage: source?.profileImage || source?.profilePhoto || "",
-    emailVerified: Boolean(source?.emailVerified ?? true),
-  };
-};
+import UseAxiosSecure from "../../../../Hook/UseAxiosSecure";
 
 const ProfileTab = () => {
   const { user } = UseAuth();
-  const api = useSettingsApi();
-  const qc = useQueryClient();
+  const axiosSecure = UseAxiosSecure();
+  const queryClient = useQueryClient();
 
-  const meQuery = useQuery({
-    queryKey: ["settingsMe"],
-    queryFn: api.getMe,
-    retry: 1,
-  });
-
-  const normalized = React.useMemo(() => normalizeMe(meQuery.data, user?.email), [meQuery.data, user?.email]);
-
-  const form = useForm({
-    resolver: zodResolver(schema),
-    values: {
-      fullName: normalized.fullName,
-      bio: normalized.bio,
-      email: normalized.email,
-      profileImage: normalized.profileImage,
+  // 1. Fetching Data
+  const { data: donor, isLoading } = useQuery({
+    queryKey: ["donorProfile", user?.email],
+    queryFn: async () => {
+      const { data } = await axiosSecure.get(`/donor/get-profile/${user?.email}`);
+      return data.data;
     },
-    mode: "onChange",
+    enabled: !!user?.email,
+    staleTime: 1000 * 60 * 5,
   });
 
+  const { register, handleSubmit, watch, reset, formState: { isDirty } } = useForm({
+    values: useMemo(() => donor, [donor]),
+  });
+
+  // 2. Instant Sync Mutation
   const mutation = useMutation({
-    mutationFn: api.updateMe,
-    onMutate: async (payload) => {
-      await qc.cancelQueries({ queryKey: ["settingsMe"] });
-      const prev = qc.getQueryData(["settingsMe"]);
-      qc.setQueryData(["settingsMe"], (old) => {
-        const oldNorm = normalizeMe(old, user?.email);
-        return { ...old, data: { ...oldNorm, ...payload } };
-      });
-      return { prev };
-    },
-    onError: (err, _payload, ctx) => {
-      if (ctx?.prev) qc.setQueryData(["settingsMe"], ctx.prev);
-      toast.error(err?.message || "Profile update failed");
+    mutationFn: async (newData) => {
+      const { data } = await axiosSecure.patch(`/donor/update-profile/${user?.email}`, newData);
+      return data.data;
     },
     onSuccess: () => {
-      toast.success("Profile updated successfully.");
+      toast.success("Profile Synced");
+      queryClient.invalidateQueries(["donorProfile", user?.email]);
     },
-    onSettled: () => {
-      qc.invalidateQueries({ queryKey: ["settingsMe"] });
-    },
+    onError: (err) => toast.error(err.response?.data?.message || "Sync Failed"),
   });
 
-  const dirty = form.formState.isDirty;
-  const saving = mutation.isPending;
-
-  const onSubmit = form.handleSubmit(async (data) => {
-    await mutation.mutateAsync({
-      fullName: data.fullName,
-      bio: data.bio,
-      email: data.email,
-      profileImage: data.profileImage,
-    });
-    form.reset(data);
-  });
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const isImage = file.type.startsWith("image/");
-    const isTooLarge = file.size > 2 * 1024 * 1024;
-    if (!isImage || isTooLarge) {
-      toast.error("Upload a valid image (max 2MB).");
-      e.target.value = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onloadend = () => form.setValue("profileImage", String(reader.result || ""), { shouldDirty: true });
-    reader.readAsDataURL(file);
-  };
-
-  if (meQuery.isLoading) return <SettingsSkeleton />;
-  if (meQuery.isError) {
-    return (
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-gray-900">Profile</h2>
-        <p className="mt-2 text-sm text-gray-600">Couldn’t load your profile from the server.</p>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="flex h-96 items-center justify-center"><span className="loading loading-spinner loading-lg text-red-600"></span></div>;
 
   return (
-    <>
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Profile</h2>
-              <p className="mt-1 text-sm text-gray-600">Public-facing information and personal details.</p>
+    <div className="mx-auto max-w-5xl pb-32">
+      <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-6">
+        
+        {/* TOP SECTION: IDENTITY & AVATAR */}
+        <div className="flex flex-col md:flex-row gap-6 items-center bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm">
+          <div className="relative group">
+            <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden bg-red-50 ring-4 ring-white shadow-lg">
+              {watch("avatar") ? (
+                <img src={watch("avatar")} className="w-full h-full object-cover" alt="Avatar" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-red-200"><User size={48} /></div>
+              )}
             </div>
-            <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-              Auto-save: Off
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-50 ring-2 ring-primary/15">
-                {form.watch("profileImage") ? (
-                  <img src={form.watch("profileImage")} alt="Profile" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs font-bold text-gray-300">IMG</div>
-                )}
-              </div>
-              <div>
-                <p className="text-sm font-bold text-gray-900">Profile picture</p>
-                <p className="mt-1 text-xs text-gray-600">JPG/PNG/WebP up to 2MB.</p>
-              </div>
-            </div>
-            <label className="btn rounded-2xl border border-gray-200 bg-white hover:bg-gray-50">
-              <Camera size={18} />
-              Upload
-              <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+            <label className="absolute -bottom-2 -right-2 bg-red-600 p-3 rounded-2xl text-white shadow-lg cursor-pointer hover:scale-110 transition-transform">
+              <Camera size={20} />
+              <input type="file" className="hidden" />
             </label>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Full name</label>
-              <input className="input input-bordered mt-2 w-full rounded-2xl" {...form.register("fullName")} placeholder="Your name" />
-              {form.formState.errors.fullName ? <p className="mt-1 text-xs text-red-600">{form.formState.errors.fullName.message}</p> : null}
-            </div>
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Email</label>
-                <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-bold text-gray-700">
-                  <BadgeCheck size={14} className="text-emerald-600" />
-                  {normalized.emailVerified ? "Verified" : "Unverified"}
-                </span>
+          <div className="flex-1 space-y-4 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-2">Full Name</label>
+                <input {...register("fullName")} className="w-full bg-gray-50 p-4 rounded-2xl font-bold text-gray-800 outline-none focus:ring-2 focus:ring-red-500/20 transition-all" />
               </div>
-              <input className="input input-bordered mt-2 w-full rounded-2xl" {...form.register("email")} placeholder="name@diu.edu.bd" />
-              {form.formState.errors.email ? <p className="mt-1 text-xs text-red-600">{form.formState.errors.email.message}</p> : null}
-            </div>
-            <div className="sm:col-span-2">
-              <label className="text-xs font-extrabold uppercase tracking-[0.22em] text-gray-400">Bio</label>
-              <textarea className="textarea textarea-bordered mt-2 w-full rounded-2xl" {...form.register("bio")} rows={4} placeholder="A short bio (optional)..." />
-              {form.formState.errors.bio ? <p className="mt-1 text-xs text-red-600">{form.formState.errors.bio.message}</p> : null}
-              <p className="mt-2 text-xs text-gray-500">{(form.watch("bio") || "").length}/280</p>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-2">Student ID</label>
+                <input {...register("studentId")} className="w-full bg-gray-50 p-4 rounded-2xl font-bold text-gray-800 outline-none focus:ring-2 focus:ring-red-500/20 transition-all" />
+              </div>
             </div>
           </div>
         </div>
-      </form>
 
-      <StickySaveBar
-        show={dirty}
-        saving={saving}
-        onSave={onSubmit}
-        onReset={() => form.reset()}
-      />
-    </>
+        {/* CORE DETAILS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          {/* Phone */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-blue-50 p-3 rounded-2xl text-blue-600"><Phone size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Phone</label>
+              <input {...register("phone")} className="w-full bg-transparent font-bold text-gray-800 outline-none" />
+            </div>
+          </div>
+
+          {/* Weight */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-orange-50 p-3 rounded-2xl text-orange-600"><Scale size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Weight (kg)</label>
+              <input type="number" {...register("weight")} className="w-full bg-transparent font-bold text-gray-800 outline-none" />
+            </div>
+          </div>
+
+          {/* Blood Group (Disabled - Identity based) */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-4 opacity-70">
+            <div className="bg-red-50 p-3 rounded-2xl text-red-600"><Droplets size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Blood Group</label>
+              <input value={donor?.bloodGroup || ""} disabled className="w-full bg-transparent font-bold text-gray-800 outline-none" />
+            </div>
+          </div>
+
+          {/* Department */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-purple-50 p-3 rounded-2xl text-purple-600"><Building size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Department</label>
+              <select {...register("department")} className="w-full bg-transparent font-bold text-gray-800 outline-none appearance-none">
+                {["CSE", "SWE", "EEE", "Pharmacy", "BBA", "Other"].map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Gender */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="bg-emerald-50 p-3 rounded-2xl text-emerald-600"><User size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Gender</label>
+              <select {...register("gender")} className="w-full bg-transparent font-bold text-gray-800 outline-none appearance-none">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Availability Toggle */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-2xl ${watch("isAvailable") ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}`}>
+                <Zap size={20} fill={watch("isAvailable") ? "currentColor" : "none"} />
+              </div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Available</label>
+            </div>
+            <input type="checkbox" {...register("isAvailable")} className="toggle toggle-error" />
+          </div>
+
+          {/* Address - Full Width */}
+          <div className="sm:col-span-2 lg:col-span-3 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex gap-4">
+            <div className="bg-gray-50 p-3 h-fit rounded-2xl text-gray-600"><MapPin size={20} /></div>
+            <div className="flex-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-2">Present Address</label>
+              <textarea {...register("presentAddress")} className="w-full bg-transparent font-bold text-gray-800 outline-none min-h-[60px] resize-none" />
+            </div>
+          </div>
+        </div>
+
+        {/* FLOATING ACTION BAR */}
+        {isDirty && (
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg bg-gray-900/90 backdrop-blur-xl p-4 rounded-[2rem] flex items-center justify-between shadow-2xl animate-in fade-in slide-in-from-bottom-4 border border-white/10">
+            <div className="flex items-center gap-3 px-2">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-xs font-bold text-white uppercase tracking-tighter">Modified Changes</p>
+            </div>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => reset()} className="btn btn-ghost btn-sm text-gray-400 hover:text-white capitalize">Discard</button>
+              <button type="submit" disabled={mutation.isPending} className="btn btn-sm bg-white text-black hover:bg-gray-200 border-none rounded-xl px-6 capitalize">
+                {mutation.isPending ? 'Saving...' : 'Update Profile'}
+              </button>
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 
 export default ProfileTab;
-

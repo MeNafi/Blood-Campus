@@ -1,77 +1,103 @@
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
+import { Trash2, AlertCircle } from "lucide-react";
 import UseAuth from "../../../../Hook/UseAuth";
-import { useSettingsApi } from "../settingsApi";
+import UseAxiosSecure from "../../../../Hook/UseAxiosSecure";
 
 const AccountTab = () => {
-  const { user, signOutUser } = UseAuth();
-  const api = useSettingsApi();
+  const { user, signOutUser, deleteAccount } = UseAuth();
+  const axiosSecure = UseAxiosSecure();
   const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const delMutation = useMutation({
-    mutationFn: api.deleteMe,
-    onSuccess: async () => {
-      toast.success("Account deleted.");
-      await signOutUser();
-      navigate("/goodbye", { replace: true });
-    },
-    onError: (err) => {
-      toast.error(err?.message || "Failed to delete account. Please try again.");
-    },
-  });
+  const handleDelete = async (email) => {
+    setIsDeleting(true);
+    const toastId = toast.loading("Purging data...");
+
+    try {
+      // 🔥 Axios POST request with email in body
+      const res = await axiosSecure.post("/user/delete-account", { 
+        email: email.trim().toLowerCase() 
+      });
+
+      if (res.data.success) {
+        // Firebase Auth deletion (Account authentication clear korar jonno)
+        if (user) {
+          await deleteAccount(user);
+        }
+        
+        toast.success("Account permanently deleted", { id: toastId });
+        await signOutUser();
+        navigate("/", { replace: true });
+      }
+    } catch (err) {
+      console.error(err);
+      const errMsg = err.response?.data?.message || "Internal Server Error (500)";
+      toast.error(errMsg, { id: toastId });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const confirmDelete = async () => {
-    const email = user?.email || "";
-    const { value } = await Swal.fire({
-      title: "Delete account",
-      html: `<p style="margin:0 0 10px 0; font-size:13px; color:#4b5563;">This will permanently remove your data. To confirm, type <b>DELETE</b>${email ? ` or <b>${email}</b>` : ""}.</p>`,
+    const userEmail = user?.email || "";
+    
+    const { value: confirmedEmail } = await Swal.fire({
+      title: "Confirm Account Deletion",
+      html: `<p class="text-sm text-gray-500">This will wipe all data. Type your email: <b>${userEmail}</b></p>`,
       input: "text",
-      inputPlaceholder: "Type DELETE to confirm",
+      inputPlaceholder: "Enter email here",
       showCancelButton: true,
-      confirmButtonText: "Delete",
-      confirmButtonColor: "#FF2C2C",
-      cancelButtonColor: "#9CA3AF",
-      preConfirm: (text) => {
-        const t = String(text || "").trim();
-        if (t !== "DELETE" && (email ? t !== email : true)) {
-          Swal.showValidationMessage("Please type DELETE (or your email) to confirm.");
+      confirmButtonText: "Delete Account",
+      confirmButtonColor: "#dc2626",
+      customClass: {
+        popup: "rounded-[2rem]",
+        confirmButton: "rounded-xl py-3 px-6",
+        cancelButton: "rounded-xl py-3 px-6",
+      },
+      preConfirm: (input) => {
+        if (input.trim().toLowerCase() !== userEmail.toLowerCase()) {
+          Swal.showValidationMessage("Email mismatch!");
           return false;
         }
-        return t;
+        return input;
       },
     });
 
-    if (!value) return;
-    delMutation.mutate();
+    if (confirmedEmail) {
+      handleDelete(confirmedEmail);
+    }
   };
 
   return (
-    <section className="space-y-4">
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-gray-900">Account</h2>
-        <p className="mt-1 text-sm text-gray-600">Plan, billing, and account lifecycle actions.</p>
+    <section className="w-full space-y-6">
+      <div className="rounded-[2rem] border border-gray-100 bg-white p-6 sm:p-8 shadow-sm">
+        <h2 className="text-xl font-black text-gray-900 tracking-tight">Account Settings</h2>
       </div>
 
-      <div className="rounded-3xl border border-red-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-red-600">Danger zone</p>
-            <h3 className="mt-1 text-lg font-black text-gray-900">Delete my data / account</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              This action is permanent. You will be signed out and redirected to a feedback page.
-            </p>
+      <div className="rounded-[2rem] border border-red-100 bg-red-50/40 p-6 sm:p-8 md:p-10 shadow-sm">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600">
+              <AlertCircle size={28} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-600">Danger zone</p>
+              <h3 className="text-lg font-bold text-gray-900 leading-tight">Delete Account</h3>
+              <p className="max-w-md text-sm text-gray-600 leading-relaxed">
+                Irreversible action. Your records will be removed from the server.
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={confirmDelete}
-            className="btn rounded-2xl border-none bg-primary text-white hover:bg-red-600"
-            disabled={delMutation.isPending}
+            disabled={isDeleting}
+            className="flex w-full md:w-auto items-center justify-center gap-2 rounded-2xl bg-red-600 px-10 py-4 text-base font-bold text-white transition-all hover:bg-red-700 active:scale-95 disabled:opacity-50"
           >
-            {delMutation.isPending ? <span className="loading loading-spinner loading-sm" /> : null}
-            Delete account
+            {isDeleting ? <span className="loading loading-spinner loading-sm" /> : <><Trash2 size={18} /> Delete Account</>}
           </button>
         </div>
       </div>
@@ -80,4 +106,3 @@ const AccountTab = () => {
 };
 
 export default AccountTab;
-

@@ -1,56 +1,77 @@
 import React from "react";
 import { FaPhoneAlt } from "react-icons/fa";
 
-
 const DonorCardWide = ({ donor, isUnavailable = false, remainingDays = 0, onToggleUnavailable }) => {
   
-  // Destructure donor properties with fallbacks
+  // Backend data structure onujayi destructuring
   const {
-    name,
     fullName,
     bloodGroup = "N/A",
     email = "No email",
     phone = "No phone",
-    city = "",
-    area = "",
-    subArea = "",
+    presentAddress = "Address not available",
     lastDonationDate = "Unknown",
-    profilePhoto,
-    profileImage,
+    avatar, // Backend e amra 'avatar' name save korchi
   } = donor || {};
-  const donorName = fullName || name || "Anonymous Donor";
-  const donorPhoto = profileImage || profilePhoto || "https://i.pravatar.cc/120?img=12";
+
+  const donorName = fullName || "Anonymous Donor";
 
   return (
     <article className="slide-up-fade rounded-xl border border-primary/30 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <img
-            src={donorPhoto}
-            alt={donorName}
-            className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/20"
-          />
+          
+          {/* Conditional Rendering: Chobi thakle dekhabe, na thakle blank/empty thakbe */}
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={donorName}
+              className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/20"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 border border-dashed border-gray-300">
+              No Photo
+            </div>
+          )}
+
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{donorName}</h3>
-            <p className="text-sm text-primary">{bloodGroup}</p>
-            <p className="text-xs text-gray-500">{[subArea, area, city].filter(Boolean).join(", ")}</p>
+            <p className="text-sm font-bold text-red-600">{bloodGroup}</p>
+            <p className="text-xs text-gray-500">{presentAddress}</p>
           </div>
         </div>
+
         <div className="space-y-1 text-sm text-gray-600 sm:text-right">
-          <p>{email}</p>
-          <p>{phone}</p>
-          <p>Last donation: {lastDonationDate}</p>
-          {isUnavailable && <p className="text-xs font-semibold text-amber-600">Available in {remainingDays} day(s)</p>}
+          <p className="font-medium text-gray-700">{email}</p>
+          <p className="text-emerald-600 font-bold">{phone}</p>
+          <p className="text-[11px] text-gray-400 uppercase tracking-tighter">
+            Last donation: {lastDonationDate ? new Date(lastDonationDate).toLocaleDateString() : "Never"}
+          </p>
+          
+          {isUnavailable && (
+            <p className="text-xs font-semibold text-amber-600">Available in {remainingDays} day(s)</p>
+          )}
+
           <div className="mt-2 flex flex-wrap justify-end gap-2">
-            <button className="btn btn-sm rounded-lg border-none bg-primary text-white hover:bg-red-600">
+            {/* Call Button */}
+            <a 
+              href={`tel:${phone}`} 
+              className="btn btn-sm rounded-lg border-none bg-red-600 text-white hover:bg-red-700 flex items-center gap-2"
+            >
               <FaPhoneAlt size={12} />
-              Call
-            </button>
+              Call Now
+            </a>
+
+            {/* Toggle Status Button */}
             <button
               onClick={() => onToggleUnavailable?.(donor)}
-              className={`btn btn-sm rounded-lg border-none ${isUnavailable ? "bg-emerald-500 text-white hover:bg-emerald-600" : "bg-gray-800 text-white hover:bg-gray-900"}`}
+              className={`btn btn-sm rounded-lg border-none ${
+                isUnavailable 
+                ? "bg-emerald-500 text-white hover:bg-emerald-600" 
+                : "bg-gray-800 text-white hover:bg-gray-900"
+              }`}
             >
-              {isUnavailable ? "Mark Available" : "Donate Blood Done"}
+              {isUnavailable ? "Mark Available" : "Donation Done"}
             </button>
           </div>
         </div>

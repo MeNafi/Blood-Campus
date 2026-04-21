@@ -6,8 +6,8 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import UseAuth from "../../../Hook/UseAuth";
 import { Link, useLocation, useNavigate } from "react-router";
-import SocialLogin from "../SocialLogin/SocialLogin";
 import logo from "../../../assets/logo_Grp.png";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const {
@@ -16,7 +16,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const { loginWithEmail } = UseAuth();
+  const { loginWithEmail, resetPassword } = UseAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = React.useState(false);
@@ -34,6 +34,63 @@ const Login = () => {
       });
   };
 
+const handleForgotPassword = async () => {
+  const { value: email } = await Swal.fire({
+    title: "Reset Password",
+    html: `<p class="text-sm text-gray-500">Enter your <b>@diu.edu.bd</b> email to receive a reset link.</p>`,
+    input: "email",
+    inputPlaceholder: "your-id@diu.edu.bd",
+    showCancelButton: true,
+    confirmButtonText: "Send Link",
+    confirmButtonColor: "#2563eb",
+    showLoaderOnConfirm: true,
+    customClass: {
+      popup: "rounded-[2rem]",
+      confirmButton: "rounded-xl py-3 px-6",
+      cancelButton: "rounded-xl py-3 px-6",
+    },
+    preConfirm: async (inputEmail) => {
+      // Logic for domain validation
+      const diuDomain = "@diu.edu.bd";
+      
+      if (!inputEmail) {
+        Swal.showValidationMessage("Please enter an email address");
+        return false;
+      }
+      
+      if (!inputEmail.toLowerCase().endsWith(diuDomain)) {
+        Swal.showValidationMessage(`Only ${diuDomain} emails are allowed!`);
+        return false;
+      }
+
+      try {
+        await resetPassword(inputEmail);
+        return inputEmail;
+      } catch (error) {
+        let errorMessage = "Could not send reset email.";
+        if (error.code === 'auth/user-not-found') errorMessage = "No account found with this university email.";
+        
+        Swal.showValidationMessage(errorMessage);
+        return false;
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  });
+
+  if (email) {
+    Swal.fire({
+      icon: "success",
+      title: "Email Sent!",
+      text: `Reset instructions sent to ${email}`,
+      confirmButtonColor: "#2563eb",
+      customClass: {
+        popup: "rounded-[2rem]",
+        confirmButton: "rounded-xl py-3 px-6",
+      },
+    });
+  }
+};
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-4"
@@ -44,7 +101,7 @@ const Login = () => {
       <div className="relative z-10 w-full max-w-[500px] bg-rose-50/90 rounded-[32px] p-8 md:p-14 shadow-2xl border border-white">
         <div className="flex flex-col items-center mb-10 text-center">
           <div className="flex items-center gap-2 mb-2">
-            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto" />
+            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto bg-red-600 rounded-2xl p-1" />
           </div>
           <p className="text-gray-800 text-lg font-medium">
             Login to find donors quickly
@@ -114,7 +171,11 @@ const Login = () => {
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
               >
-                {showPassword ? <AiOutlineEyeInvisible size={22} /> : <AiOutlineEye size={22} />}
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={22} />
+                ) : (
+                  <AiOutlineEye size={22} />
+                )}
               </button>
             </div>
             {errors.password && (
@@ -126,6 +187,7 @@ const Login = () => {
 
           <div className="flex justify-end pr-1">
             <button
+              onClick={handleForgotPassword}
               type="button"
               className="text-[#ef4444] font-bold hover:underline text-lg"
             >
@@ -146,20 +208,13 @@ const Login = () => {
         <div className="text-center">
           <p className="text-gray-700 text-lg">
             Don&apos;t have any account?{" "}
-            <Link to={"/register"} className="text-[#ef4444] font-bold hover:underline">
+            <Link
+              to={"/register"}
+              className="text-[#ef4444] font-bold hover:underline"
+            >
               Create one now
             </Link>
           </p>
-          <p className="mt-2 text-sm text-gray-600">
-            Admin user?{" "}
-            <Link to="/admin/login" className="font-semibold text-[#ef4444] hover:underline">
-              Login as Admin
-            </Link>
-          </p>
-        </div>
-
-        <div className="mt-6">
-          <SocialLogin />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   FaRegUser,
@@ -15,66 +15,89 @@ import {
   MdOutlineTransgender,
   MdEventNote,
 } from "react-icons/md";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router"; // Added useNavigate
 import UseAxiosSecure from "../../Hook/UseAxiosSecure";
-import Swal from "sweetalert2";
+import UseAuth from "../../Hook/UseAuth";
 
 const DonorRegistration = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
-
+  const [selectedFile, setSelectedFile] = useState(null); // File state for backend
+  const { user } = UseAuth();
+  const navigate = useNavigate();
+  const axiosSecure = UseAxiosSecure();
+  
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      email: user?.email || ""
+    }
+  });
 
-  const axiosSecure = UseAxiosSecure();
+  useEffect(() => {
+    if (user?.email) {
+      setValue("email", user.email);
+    }
+  }, [user, setValue]);
 
+  // Handle Photo Selection
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const blockedWords = ["nude", "sex", "xxx", "porn", "nsfw", "vulgar"];
-      const lowerName = file.name.toLowerCase();
-      const isBlockedName = blockedWords.some((word) => lowerName.includes(word));
-      const isImage = file.type.startsWith("image/");
-      const isTooLarge = file.size > 2 * 1024 * 1024;
-
-      if (!isImage || isTooLarge || isBlockedName) {
-        Swal.fire({
-          icon: "error",
-          title: "Invalid image",
-          text: "Please upload a clean profile image (jpg/png/webp) under 2MB.",
-          confirmButtonColor: "#FF2C2C",
-        });
-        e.target.value = "";
-        return;
-      }
-
+      setSelectedFile(file); // Keep the binary file for FormData
       const reader = new FileReader();
-      reader.onloadend = () => setPhotoPreview(reader.result);
+      reader.onloadend = () => setPhotoPreview(reader.result); // Base64 for preview
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = async (data) => {
     const fullAddress = `${data.sector}, ${data.area}, ${data.city}`;
+    
+    // 1. Create FormData (Crucial for Multer/File Upload)
+    const formData = new FormData();
 
-    const finalData = {
-      ...data,
-      presentAddress: fullAddress,
-      weight: Number(data.weight),
-      totalDonations: 0,
-      profileImage: photoPreview,
-    };
+    // 2. Append all text fields
+    formData.append("fullName", data.fullName);
+    formData.append("studentId", data.studentId);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("bloodGroup", data.bloodGroup);
+    formData.append("gender", data.gender);
+    formData.append("weight", data.weight);
+    formData.append("department", data.department);
+    formData.append("lastDonationDate", data.lastDonationDate || "");
+    formData.append("presentAddress", fullAddress);
+    formData.append("privacyMode", data.privacyMode);
+    formData.append("totalDonations", 0);
 
-    console.log("Donor Schema Ready Data:", finalData);
+    // 3. Append the file (Field name MUST match backend: upload.single("avatar"))
+    if (selectedFile) {
+      formData.append("avatar", selectedFile);
+    } else {
+      alert("Please upload a profile photo first!");
+      return;
+    }
+
     try {
-      const res = await axiosSecure.post("/donor/find-donor", finalData);
-      alert("Successfully Created");
-      console.log(res.data);
+      // 4. Send request with multipart/form-data header
+      const res = await axiosSecure.post("/donor/donorRequest", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.data) {
+        alert("Registration Successful!");
+        navigate("/");
+      }
     } catch (err) {
-      alert("Error: " + err.message);
+      const errorMsg = err.response?.data?.message || "Something went wrong!";
+      alert("Error: " + errorMsg);
       console.error(err);
     }
   };
@@ -83,6 +106,7 @@ const DonorRegistration = () => {
   const watchCity = watch("city");
   const watchArea = watch("area");
 
+  // Styles
   const labelStyle = "block text-[11px] font-bold text-gray-400 uppercase tracking-[2px] mb-2 ml-1";
   const inputStyle = "w-full h-12 pl-12 pr-4 rounded-xl bg-white border-2 border-gray-200 text-gray-700 text-sm focus:border-red-500 focus:bg-white outline-none transition-all duration-300 shadow-sm";
   const selectStyle = "w-full h-12 pl-12 pr-10 rounded-xl bg-white border-2 border-gray-200 text-gray-700 text-sm focus:border-red-500 focus:bg-white outline-none appearance-none cursor-pointer transition-all duration-300 shadow-sm";
@@ -90,6 +114,7 @@ const DonorRegistration = () => {
   return (
     <div className="min-h-screen bg-[#fcfcfc] flex items-center justify-center py-12 px-4 font-sans text-gray-900">
       <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
+        
         <div className="bg-gray-900 px-8 py-10 flex flex-col md:flex-row items-center justify-between">
           <div>
             <h1 className="text-3xl font-black text-white text-center md:text-left">
@@ -101,6 +126,8 @@ const DonorRegistration = () => {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-8">
+          
+          {/* Photo Upload Section */}
           <div className="flex flex-col items-center justify-center space-y-4 pb-4 border-b border-gray-100">
             <div className="relative w-32 h-32 group">
               <div className="w-full h-full rounded-full border-4 border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center shadow-inner">
@@ -112,9 +139,9 @@ const DonorRegistration = () => {
               </div>
               <label className="absolute bottom-1 right-1 bg-red-600 p-3 rounded-full text-white cursor-pointer hover:bg-red-700 transition-colors shadow-lg">
                 <FaCamera className="text-sm" />
-                <input
-                  type="file"
-                  className="hidden"
+                <input 
+                  type="file" 
+                  className="hidden" 
                   accept="image/*"
                   onChange={handlePhotoChange}
                 />
@@ -126,25 +153,25 @@ const DonorRegistration = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="relative group">
               <label className={labelStyle}>Full Name</label>
-              <FaRegUser className="absolute left-4 bottom-4 text-gray-400 group-focus-within:text-red-500" />
+              <FaRegUser className="absolute left-4 bottom-4 text-gray-400" />
               <input type="text" placeholder="Rakib Ahmed" className={inputStyle} {...register("fullName", { required: true })} />
             </div>
 
             <div className="relative group">
               <label className={labelStyle}>Student ID</label>
-              <FaIdCard className="absolute left-4 bottom-4 text-gray-400 group-focus-within:text-red-500" />
+              <FaIdCard className="absolute left-4 bottom-4 text-gray-400" />
               <input type="text" placeholder="211-15-XXXX" className={inputStyle} {...register("studentId", { required: true })} />
             </div>
 
             <div className="relative group">
               <label className={labelStyle}>DIU Email</label>
-              <HiOutlineMail className="absolute left-4 bottom-3.5 text-gray-400 text-lg group-focus-within:text-red-500" />
-              <input type="email" placeholder="name@diu.edu.bd" className={inputStyle} {...register("email", { required: true, pattern: /@diu\.edu\.bd$/ })} />
+              <HiOutlineMail className="absolute left-4 bottom-3.5 text-gray-400 text-lg" />
+              <input type="email" className={`${inputStyle} bg-gray-50 cursor-not-allowed`} readOnly {...register("email", { required: true })} />
             </div>
 
             <div className="relative group">
               <label className={labelStyle}>Phone Number</label>
-              <FaPhone className="absolute left-4 bottom-4 text-gray-400 group-focus-within:text-red-500" />
+              <FaPhone className="absolute left-4 bottom-4 text-gray-400" />
               <input type="tel" placeholder="017XXXXXXXX" className={inputStyle} {...register("phone", { required: true })} />
             </div>
           </div>
@@ -173,7 +200,6 @@ const DonorRegistration = () => {
               <label className={labelStyle}>Weight (kg)</label>
               <FaWeight className="absolute left-4 bottom-4 text-gray-400" />
               <input type="number" placeholder="Min 50" className={inputStyle} {...register("weight", { required: true, min: 50 })} />
-              {errors.weight && <span className="text-[10px] text-red-500 mt-1 ml-1 font-bold">Minimum 50kg required</span>}
             </div>
           </div>
 

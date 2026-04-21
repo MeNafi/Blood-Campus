@@ -9,6 +9,7 @@ import UseAuth from "../../../Hook/UseAuth";
 import { Link, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import logo from "../../../assets/logo_Grp.png";
+import UseAxios from "../../../Hook/UseAxios";
 
 const Registration = () => {
   const {
@@ -20,22 +21,43 @@ const Registration = () => {
 
   const { registerWithEmail, updateUserProfile } = UseAuth();
   const navigate = useNavigate();
+  const axios = UseAxios();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
-  const onSubmit = (data) => {
-    console.log("Registration Data:", data);
-    if (data.password === data.confirmPassword) {
-      registerWithEmail(data.email, data.password)
-        .then(async (res) => {
-          console.log(res);
-          await updateUserProfile(data.name);
-          navigate("/");
-        })
-        .catch((error) => {
-          console.log(error);
-          alert(error.message);
-        });
+  const onSubmit = async (data) => { // async add koro
+    try {
+      if (data.password !== data.confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      // 1. Firebase/Auth Registration
+      const res = await registerWithEmail(data.email, data.password);
+      console.log("Firebase Auth Res:", res);
+
+      // 2. Profile Update
+      await updateUserProfile(data.name);
+
+      // 3. Backend Registration
+      const userInfo = { 
+        fullName: data.name, 
+        email: data.email.toLowerCase().trim() // Normalize email
+      };
+
+      const backendRes = await axios.post("user/user-register", userInfo);
+      
+      if (backendRes.data.success) {
+        alert("Account Created Successfully!");
+        navigate("/");
+      }
+
+    } catch (error) {
+      console.error("Registration Error:", error);
+      
+      // Jodi backend 409 (Conflict) ba 400 pathay
+      const errorMessage = error.response?.data?.message || error.message || "Registration failed";
+      alert(errorMessage);
     }
   };
 
@@ -51,9 +73,11 @@ const Registration = () => {
       <div className="relative z-10 w-full max-w-[500px] bg-rose-50/90 rounded-[32px] p-8 md:p-14 shadow-2xl border border-white">
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="flex items-center gap-2 mb-2">
-            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto" />
+            <img src={logo} alt="BloodCampus Logo" className="h-12 w-auto bg-red-600 rounded-xl p-1" />
           </div>
-          <p className="text-gray-800 text-lg font-medium">Create account with university email</p>
+          <p className="text-gray-800 text-lg font-medium">
+            Create account with university email
+          </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -183,7 +207,11 @@ const Registration = () => {
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl cursor-pointer"
               >
-                {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                {showConfirmPassword ? (
+                  <AiOutlineEyeInvisible />
+                ) : (
+                  <AiOutlineEye />
+                )}
               </button>
             </div>
             {errors.confirmPassword && (
@@ -206,20 +234,13 @@ const Registration = () => {
         <div className="text-center">
           <p className="text-gray-700 text-lg">
             Already have an account ?{" "}
-            <Link to={"/login"} className="text-[#ef4444] font-bold hover:underline">
+            <Link
+              to={"/login"}
+              className="text-[#ef4444] font-bold hover:underline"
+            >
               Login
             </Link>
-          </p>
-          <p className="mt-2 text-sm text-gray-600">
-            Admin user?{" "}
-            <Link to="/admin/login" className="font-semibold text-[#ef4444] hover:underline">
-              Login as Admin
-            </Link>
-          </p>
-        </div>
-
-        <div className="mt-6">
-          <SocialLogin />
+          </p>  
         </div>
       </div>
     </div>

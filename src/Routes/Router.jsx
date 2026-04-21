@@ -12,7 +12,6 @@ import AdminDashboard from "../Pages/Admin/AdminDashboard";
 import AdminRoute from "./AdminRoute";
 import UnableDonor from "../Pages/UnableDonor/UnableDonor";
 import DashboardLayout from "../Dashboard/layout/DashboardLayout";
-import StudentOverview from "../Dashboard/student/pages/StudentOverview";
 import FindBlood from "../Dashboard/student/pages/FindBlood";
 import DonationHistory from "../Dashboard/student/pages/DonationHistory";
 import About from "../Dashboard/student/pages/About";
@@ -60,7 +59,6 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          { index: true, Component: StudentOverview },
           { path: "find-blood", Component: FindBlood },
           { path: "donation-history", Component: DonationHistory },
           { path: "about", Component: About },

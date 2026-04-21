@@ -5,8 +5,10 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   createUserWithEmailAndPassword,
+  deleteUser,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -46,6 +48,14 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  }
+
+  const deleteAccount = (user) => {
+    return deleteUser(user)
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -65,6 +75,8 @@ const AuthProvider = ({ children }) => {
     loginWithEmail,
     loginWithGoogle,
     signOutUser,
+    resetPassword,
+    deleteAccount
   };
   return <AuthContext value={authInfo}>{children}</AuthContext>;
 };

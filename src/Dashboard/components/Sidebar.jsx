@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 const studentItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/dashboard/find-blood", label: "Find Blood", icon: Droplet },
   { to: "/dashboard/donation-history", label: "Donation History", icon: History },
   { to: "/dashboard/about", label: "About", icon: Info },

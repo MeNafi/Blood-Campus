@@ -26,7 +26,7 @@ const getBreadcrumbs = (pathname) => {
   return crumbs;
 };
 
-const HeaderBar = ({ onOpenSidebar, searchValue, onSearchChange, variant = "student" }) => {
+const HeaderBar = ({ onOpenSidebar = "student" }) => {
   const { user, signOutUser } = UseAuth();
   const { isAdmin, activeView, setActiveView } = useDashboardRole();
   const location = useLocation();
@@ -69,15 +69,6 @@ const HeaderBar = ({ onOpenSidebar, searchValue, onSearchChange, variant = "stud
         </nav>
 
         <div className="ml-auto flex flex-1 items-center justify-end gap-3">
-          <div className="hidden w-full max-w-xl items-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 py-2 shadow-sm sm:flex">
-            <Search size={16} className="text-gray-400" />
-            <input
-              value={searchValue}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              placeholder={variant === "admin" ? "Search donors, emails, departments..." : "Search donors by name, blood group, hall..."}
-              className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
-            />
-          </div>
 
           {isAdmin ? (
             <div className="hidden items-center gap-2 rounded-2xl border border-gray-200 bg-white p-1 shadow-sm sm:flex">

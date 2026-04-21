@@ -12,9 +12,8 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "All List", path: "/donor-list" },
     { name: "Find Blood", path: "/find-donor" },
-    { name: "Register Donor", path: "/donor-register" },
+    { name: "Be A Donor", path: "/donor-register" },
   ];
 
   const isAdmin = ADMIN_EMAILS.includes(user?.email || "");

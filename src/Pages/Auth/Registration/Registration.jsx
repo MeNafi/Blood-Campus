@@ -32,17 +32,17 @@ const Registration = () => {
         return;
       }
 
-      // 1. Firebase/Auth Registration
+    
       const res = await registerWithEmail(data.email, data.password);
       console.log("Firebase Auth Res:", res);
 
-      // 2. Profile Update
+      
       await updateUserProfile(data.name);
 
-      // 3. Backend Registration
+    
       const userInfo = { 
         fullName: data.name, 
-        email: data.email.toLowerCase().trim() // Normalize email
+        email: data.email.toLowerCase().trim() 
       };
 
       const backendRes = await axios.post("user/user-register", userInfo);
@@ -55,7 +55,7 @@ const Registration = () => {
     } catch (error) {
       console.error("Registration Error:", error);
       
-      // Jodi backend 409 (Conflict) ba 400 pathay
+    
       const errorMessage = error.response?.data?.message || error.message || "Registration failed";
       alert(errorMessage);
     }

@@ -30,7 +30,6 @@ const settingsItems = [
 const adminItems = [
   { to: "/admin", label: "Analytics", icon: LineChart, end: true },
   { to: "/admin/donors", label: "Donors", icon: Users },
-  { to: "/admin/verification", label: "Verification", icon: BadgeCheck },
 ];
 
 const Sidebar = ({ variant = "student", onNavigate }) => {

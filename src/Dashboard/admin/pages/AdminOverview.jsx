@@ -11,24 +11,17 @@ import UseAxiosSecure from "../../../Hook/UseAxiosSecure";
 const AdminOverview = () => {
   const axiosSecure = UseAxiosSecure();
 
-  // 1. Fetching Analytics based on your backend controller
   const { data: analytics, isLoading, isError } = useQuery({
     queryKey: ["adminAnalytics"],
     queryFn: async () => {
-      // Endpoint must match your router.route("/admin-analytics")
       const res = await axiosSecure.get("/donor/admin-analytics");
-      
-      /** * CRITICAL FIX: 
-       * Your backend returns: { statusCode, data, message }
-       * Axios returns: { data: { statusCode, data, message } }
-       * So we return res.data.data to get the actual counts/arrays
-       */
+
       return res.data.data; 
     },
     refetchOnWindowFocus: false,
   });
 
-  // 2. Formatting Blood Group Distribution for the Pie Chart
+
   const pieData = useMemo(() => {
     if (!analytics?.bloodGroupDistribution) return [];
     return analytics.bloodGroupDistribution.map(item => ({
@@ -50,7 +43,7 @@ const AdminOverview = () => {
         <p className="text-sm font-medium text-gray-500">Live data overview of the BloodCampus platform.</p>
       </div>
 
-      {/* Top Stat Cards - Linked to your countDocuments() results */}
+    
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard 
           icon={<Users size={20} />} 
@@ -72,9 +65,9 @@ const AdminOverview = () => {
         />
       </div>
 
-      {/* Charts Row */}
+  
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Growth Chart - Uses your growthData aggregate */}
+       
         <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm">
           <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Weekly Registration Trend</h3>
           <div className="h-64">
@@ -90,7 +83,7 @@ const AdminOverview = () => {
           </div>
         </div>
 
-        {/* Blood Group Pie Chart - Uses your bloodGroupDistribution aggregate */}
+        
         <div className="rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm">
           <h3 className="mb-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Donor Distribution</h3>
           <div className="flex flex-col md:flex-row items-center gap-4">
@@ -106,7 +99,7 @@ const AdminOverview = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            {/* Custom Legend */}
+           
             <div className="grid grid-cols-2 gap-2 w-full md:w-1/2">
               {pieData.map((entry, index) => (
                 <div key={entry.name} className="flex items-center gap-2 p-2 rounded-xl bg-gray-50/50 border border-gray-100">
@@ -122,7 +115,7 @@ const AdminOverview = () => {
   );
 };
 
-// Reusable Stat Card
+
 const StatCard = ({ icon, title, value, sub }) => (
   <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm transition-all hover:border-red-100">
     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">

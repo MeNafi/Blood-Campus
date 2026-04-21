@@ -1,51 +1,54 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Outlet } from "react-router";
 import Sidebar from "../components/Sidebar";
 import HeaderBar from "../components/HeaderBar";
 import { DashboardRoleProvider, useDashboardRole } from "../state/dashboardRoleContext";
 
 const DrawerLayout = ({ variant }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const { isAdmin, activeView } = useDashboardRole();
 
-  const effectiveVariant = React.useMemo(() => {
+  const effectiveVariant = useMemo(() => {
     if (!isAdmin) return "student";
     return variant || (activeView === "admin" ? "admin" : "student");
   }, [isAdmin, activeView, variant]);
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <div className="flex">
-        <div className="hidden h-screen w-72 lg:block">
-          <Sidebar variant={effectiveVariant} />
+    <div className="min-h-screen bg-brand-bg flex overflow-hidden">
+     
+      <aside className="hidden lg:flex lg:flex-shrink-0 lg:w-72 h-screen sticky top-0 border-r border-gray-100">
+        <Sidebar variant={effectiveVariant} />
+      </aside>
+
+  
+      <div className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-300 ${sidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+       
+        <div 
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+          onClick={() => setSidebarOpen(false)} 
+        />
+        
+       
+        <div className={`absolute left-0 top-0 h-full w-72 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <Sidebar variant={effectiveVariant} onNavigate={() => setSidebarOpen(false)} />
         </div>
+      </div>
 
-        {sidebarOpen ? (
-          <div className="fixed inset-0 z-40 lg:hidden">
-            <button
-              type="button"
-              className="absolute inset-0 bg-black/30"
-              aria-label="Close sidebar overlay"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <div className="absolute left-0 top-0 h-full w-72 shadow-2xl">
-              <Sidebar variant={effectiveVariant} onNavigate={() => setSidebarOpen(false)} />
-            </div>
-          </div>
-        ) : null}
-
-        <div className="min-w-0 flex-1">
-          <HeaderBar
-            variant={effectiveVariant}
-            onOpenSidebar={() => setSidebarOpen(true)}
-            searchValue={search}
-            onSearchChange={setSearch}
-          />
-          <main className="mx-auto w-full max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
+     
+      <div className="flex flex-col flex-1 min-w-0 h-screen overflow-y-auto overflow-x-hidden">
+        <HeaderBar
+          variant={effectiveVariant}
+          onOpenSidebar={() => setSidebarOpen(true)}
+          searchValue={search}
+          onSearchChange={setSearch}
+        />
+        
+        <main className="flex-1 relative focus:outline-none">
+          <div className="mx-auto w-full max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
             <Outlet context={{ dashboardSearch: search, dashboardVariant: effectiveVariant }} />
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     </div>
   );
@@ -60,4 +63,3 @@ const DashboardLayout = ({ variant }) => {
 };
 
 export default DashboardLayout;
-

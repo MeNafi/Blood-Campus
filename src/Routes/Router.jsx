@@ -18,7 +18,6 @@ import About from "../Dashboard/student/pages/About";
 import Settings from "../Dashboard/student/pages/Settings";
 import AdminOverview from "../Dashboard/admin/pages/AdminOverview";
 import DonorManagement from "../Dashboard/admin/pages/DonorManagement";
-import VerificationQueue from "../Dashboard/admin/pages/VerificationQueue";
 import { Navigate } from "react-router";
 import Goodbye from "../Pages/Goodbye/Goodbye";
 
@@ -84,7 +83,6 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: AdminOverview },
           { path: "donors", Component: DonorManagement },
-          { path: "verification", Component: VerificationQueue },
         ],
       },
       {

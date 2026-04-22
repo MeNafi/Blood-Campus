@@ -12,6 +12,7 @@ const BloodFilter = ({ onFilterChange, onSearchChange }) => {
         if (onFilterChange) onFilterChange(group);
     };
 
+    
     return (
         <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
             {/* Top Row: Title and Search Bar */}

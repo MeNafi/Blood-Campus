@@ -1,0 +1,131 @@
+[
+  {
+    "type": "bloodGroup",
+    "data": [
+      { "label": "A+", "value": 5 },
+      { "label": "A-", "value": 3 },
+      { "label": "B+", "value": 4 },
+      { "label": "B-", "value": 3 },
+      { "label": "O+", "value": 4 },
+      { "label": "O-", "value": 4 },
+      { "label": "AB+", "value": 4 },
+      { "label": "AB-", "value": 1 }
+    ]
+  },
+  {
+    "type": "department",
+    "data": [
+      { "label": "CSE", "value": 4 },
+      { "label": "EEE", "value": 3 },
+      { "label": "BBA", "value": 3 },
+      { "label": "Pharmacy", "value": 3 },
+      { "label": "Civil", "value": 3 },
+      { "label": "SWE", "value": 3 },
+      { "label": "Law", "value": 3 },
+      { "label": "MCT", "value": 3 },
+      { "label": "Environmental Science", "value": 3 },
+      { "label": "CIS", "value": 3 }
+    ]
+  },
+  {
+    "type": "monthlyDonations",
+    "data": [
+      { "label": "Jan", "value": 4 },
+      { "label": "Feb", "value": 5 },
+      { "label": "Mar", "value": 6 },
+      { "label": "Apr", "value": 3 },
+      { "label": "May", "value": 0 },
+      { "label": "Jun", "value": 0 },
+      { "label": "Jul", "value": 2 },
+      { "label": "Aug", "value": 2 },
+      { "label": "Sep", "value": 3 },
+      { "label": "Oct", "value": 2 },
+      { "label": "Nov", "value": 4 },
+      { "label": "Dec", "value": 3 }
+    ]
+  },
+  {
+    "type": "status",
+    "data": [
+      { "label": "Available", "value": 18 },
+      { "label": "Unavailable", "value": 12 }
+    ]
+  },
+
+  
+
+  {
+    "type": "weeklyDonations",
+    "data": [
+      { "label": "Week 1", "value": 6 },
+      { "label": "Week 2", "value": 8 },
+      { "label": "Week 3", "value": 5 },
+      { "label": "Week 4", "value": 7 }
+    ]
+  },
+
+
+  {
+    "type": "yearlyDonations",
+    "data": [
+      { "label": "2022", "value": 120 },
+      { "label": "2023", "value": 180 },
+      { "label": "2024", "value": 240 },
+      { "label": "2025", "value": 310 },
+      { "label": "2026", "value": 150 }
+    ]
+  },
+
+
+  {
+    "type": "donorGrowth",
+    "data": [
+      { "label": "Jan", "value": 10 },
+      { "label": "Feb", "value": 15 },
+      { "label": "Mar", "value": 20 },
+      { "label": "Apr", "value": 25 }
+    ]
+  },
+
+
+  {
+    "type": "topDepartments",
+    "data": [
+      { "label": "CSE", "value": 4 },
+      { "label": "EEE", "value": 3 },
+      { "label": "BBA", "value": 3 }
+    ]
+  },
+
+
+  {
+    "type": "inactiveDonors",
+    "data": [
+      { "label": "0-3 months", "value": 10 },
+      { "label": "3-6 months", "value": 8 },
+      { "label": "6-12 months", "value": 6 },
+      { "label": "1+ year", "value": 3 }
+    ]
+  },
+
+
+  {
+    "type": "bloodDemand",
+    "data": [
+      { "label": "A+", "value": 7 },
+      { "label": "B+", "value": 6 },
+      { "label": "O+", "value": 9 },
+      { "label": "O-", "value": 5 }
+    ]
+  },
+
+  
+  {
+    "type": "donationFrequency",
+    "data": [
+      { "label": "1 time", "value": 12 },
+      { "label": "2-3 times", "value": 10 },
+      { "label": "4+ times", "value": 8 }
+    ]
+  }
+]

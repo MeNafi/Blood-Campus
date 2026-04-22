@@ -20,6 +20,7 @@ const About = () => {
             availability visibility, and campus trust signals.
           </p>
 
+
           <h2 className="mt-6 text-lg font-bold text-gray-900">Safety guidelines</h2>
           <ul className="mt-3 space-y-2 text-sm text-gray-600">
             <li>- Always verify identity (DIU email / student ID) before meeting.</li>
@@ -27,12 +28,14 @@ const About = () => {
             <li>- Share only required contact info. Avoid posting sensitive details publicly.</li>
           </ul>
 
+
           <h2 className="mt-6 text-lg font-bold text-gray-900">Eligibility</h2>
           <p className="mt-2 text-sm text-gray-600">
             Eligibility depends on health conditions and local medical guidelines. If you are on medication or recently
             donated, set your status to Unable and provide a duration.
           </p>
         </div>
+
 
         <div className="rounded-2xl border border-primary/10 bg-primary/5 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900">Emergency contact</h2>

@@ -88,6 +88,7 @@ const DonationHistory = () => {
   }
 };
 
+
   const handleDelete = async (id) => {
     Swal.fire({
       title: "Delete Record?",
@@ -112,11 +113,13 @@ const DonationHistory = () => {
     });
   };
 
+
   if (loading) return (
     <div className="flex justify-center p-20">
         <span className="loading loading-dots loading-lg text-red-600"></span>
     </div>
   );
+
 
   return (
     <section className="space-y-6">
@@ -167,6 +170,7 @@ const DonationHistory = () => {
         )}
       </div>
 
+
       <dialog id="add_donation_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box p-0 rounded-3xl overflow-hidden bg-white">
           <div className="bg-red-600 p-8 text-white">
@@ -191,6 +195,7 @@ const DonationHistory = () => {
               <label className="text-xs font-bold uppercase text-gray-400 ml-1">Private Note</label>
               <textarea placeholder="Any specific info..." value={note} onChange={(e) => setNote(e.target.value)} className="textarea textarea-bordered mt-2 w-full rounded-xl h-24" />
             </div>
+
 
             <div className="flex gap-3 pt-2">
               <button onClick={closeModal} className="btn flex-1 rounded-xl border-gray-200 bg-white text-gray-600">Discard</button>

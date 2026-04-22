@@ -16,11 +16,13 @@ const AccountTab = () => {
     setIsDeleting(true);
     const toastId = toast.loading("Purging data...");
 
+
     try {
       // 🔥 Axios POST request with email in body
       const res = await axiosSecure.post("/user/delete-account", { 
         email: email.trim().toLowerCase() 
       });
+
 
       if (res.data.success) {
         // Firebase Auth deletion (Account authentication clear korar jonno)
@@ -28,6 +30,7 @@ const AccountTab = () => {
           await deleteAccount(user);
         }
         
+
         toast.success("Account permanently deleted", { id: toastId });
         await signOutUser();
         navigate("/", { replace: true });
@@ -41,6 +44,7 @@ const AccountTab = () => {
     }
   };
 
+  
   const confirmDelete = async () => {
     const userEmail = user?.email || "";
     
